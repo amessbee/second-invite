@@ -10,7 +10,19 @@ ATOM=000000$(ATOM_DENOM)
 
 # your deployer address made from make add-address
 # ADDR=agoric1k78s7qz7rxy8afyjrqk3dntg8m83zaw3upe60p
-ADDR=agoric19nkd4kgwesmgm3hmlvw4e5cws695yyfhsplzqt
+USERNAME ?= user1
+
+ADDR := $(shell kubectl exec -i agoriclocal-genesis-0 -c validator -- sh -c '\
+    if ! agd keys show $(USERNAME) >/dev/null 2>&1; then \
+        agd keys add $(USERNAME) --output json; \
+    else \
+        agd keys show $(USERNAME) --output json; \
+    fi' | jq -r ".address" \
+)
+
+$(info USERNAME is $(USERNAME))
+$(info ADDR is $(ADDR))
+
 
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
@@ -77,7 +89,7 @@ vote:
 instance-q:
 	agd query vstorage data published.agoricNames.instance -o json
 
-start: start-contract-orca
+start: start-contract-med-rec
 
 
 
@@ -113,9 +125,9 @@ clean:
 cpfiles:
 	kubectl cp bundles/deploy-board-aux-permit.json default/agoriclocal-genesis-0:/root/bundles/deploy-board-aux-permit.json
 	kubectl cp bundles/deploy-board-aux.js default/agoriclocal-genesis-0:/root/bundles/deploy-board-aux.js
-	kubectl cp bundles/deploy-orca-permit.json default/agoriclocal-genesis-0:/root/bundles/deploy-orca-permit.json
-	kubectl cp bundles/deploy-orca.js default/agoriclocal-genesis-0:/root/bundles/deploy-orca.js
-	kubectl cp bundles/bundle-orca.js default/agoriclocal-genesis-0:/root/bundles/bundle-orca.js
+	kubectl cp bundles/deploy-med-rec-permit.json default/agoriclocal-genesis-0:/root/bundles/deploy-med-rec-permit.json
+	kubectl cp bundles/deploy-med-rec.js default/agoriclocal-genesis-0:/root/bundles/deploy-med-rec.js
+	kubectl cp bundles/bundle-med-rec.js default/agoriclocal-genesis-0:/root/bundles/bundle-med-rec.js
 	kubectl cp bundles/bundle-list-ship default/agoriclocal-genesis-0:/root/bundles/bundle-list-ship
 
 	kubectl cp scripts/build-proposal.sh default/agoriclocal-genesis-0:/root/scripts/build-proposal.sh
@@ -127,11 +139,11 @@ cpfiles:
 
 	kubectl cp ./Makefile default/agoriclocal-genesis-0:/root/Makefile
 rmfiles:
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/bundle-orca.json
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/bundle-med-rec.json
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/deploy-board-aux-permit.json
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/deploy-board-aux.js
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/deploy-orca-permit.json
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/deploy-orca.js
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/deploy-med-rec-permit.json
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/deploy-med-rec.js
 
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./scripts/build-proposal.sh
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./scripts/install-bundles.sh
@@ -254,16 +266,16 @@ build:
 buildc:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn build:deployer"
 deployc:
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/med-rec.contract.js --eval src/med-rec.proposal.js"
 deploy:
-	yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js
-test-orca:
-	yarn test ./test/orca-contract.test.js
+	yarn node scripts/deploy-contract.js --install src/med-rec.contract.js --eval src/med-rec.proposal.js
+test-med-rec:
+	yarn test ./test/med-rec-contract.test.js
 
 
 # todo remove clean install steps after debugging
 e2e:
-	$(DEPLOY) src/builder/init-orca.js
+	$(DEPLOY) src/builder/init-med-rec.js
 lint:
 	yarn lint --fix-dry-run --ignore-pattern "*patch*" 
 

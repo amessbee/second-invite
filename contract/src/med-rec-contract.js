@@ -30,13 +30,6 @@ const OrchestrationPowersShape = M.splitRecord({
 });
 
 
-/**
- * @typedef {{
- * maxPatients: bigint;
- * }} PatientTerms
- */
-
-
 /** @type {ContractMeta} */
 export const meta = {
   privateArgsShape: M.and(
@@ -46,7 +39,7 @@ export const meta = {
     }),
   ),
   customTermsShape: {
-    maxPatients: M.bigint(),
+    chainDetails: M.recordOf(M.string(), ChainInfoShape),
   },
 };
 harden(meta);
@@ -55,7 +48,7 @@ const trace = makeTracer('MedRecContract');
 /**
  * @typedef {{
 *   chainDetails: Record<string, CosmosChainInfo>
-* }} OrcaTerms
+* }} MedRecTerms
 *
 * @param {ZCF} zcf
 * @param {OrchestrationPowers & {
@@ -70,9 +63,10 @@ const contract = async (
  zone,
  { orchestrateAll, zoeTools, chainHub },
 ) => {
- trace('orca start contract');
+ trace('med-rec start contract');
 
-  const { maxPatients } = zcf.getTerms();
+  // const { maxPatients } = zcf.getTerms();
+  const maxPatients = 100n;
   let patientCount = 0n;
 
   // Create storage node for patient data
@@ -159,8 +153,8 @@ const contract = async (
   const { publishMedRec } = orchestrated;
 
   const publicFacet = zone.exo(
-    'Orca Public Facet',
-    M.interface('Orca PF', {
+    'MedRec Public Facet',
+    M.interface('MedRec PF', {
       makePublishInvitation: M.callWhen().returns(InvitationShape),
     }),
     {

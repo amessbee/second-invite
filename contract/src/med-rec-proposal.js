@@ -1,6 +1,6 @@
 // @ts-check
 import { E } from '@endo/far';
-import { makeTracer } from './tools/debug.js';
+import { makeTracer } from '../tools/debug.js';
 
 /// <reference types="@agoric/vats/src/core/types-ambient"/>
 /// <reference types="@agoric/zoe/src/contractFacet/types-ambient"/>
