@@ -1,5 +1,5 @@
 // @ts-check
-import { E, Far } from '@endo/far';
+import { heapVowE as E } from '@agoric/vow/vat.js';
 import { M } from '@endo/patterns';
 import '@agoric/zoe/exported.js';
 import { makeTracer } from '@agoric/internal';
@@ -14,6 +14,7 @@ import * as flows from './med-rec-flows.js';
 /**
  * @import {Marshaller} from '@agoric/internal/src/lib-chainStorage.js';
  * @import {CosmosChainInfo} from '@agoric/orchestration';
+ * @import {Vow} from '@agoric/vow';
  * @import {OrchestrationPowers, OrchestrationTools} from '@agoric/orchestration/src/utils/start-helper.js';
  * @import {Zone} from '@agoric/zone';
  */
@@ -61,7 +62,7 @@ const contract = async (
  zcf,
  privateArgs,
  zone,
- { orchestrateAll, zoeTools, chainHub },
+ { orchestrateAll, zoeTools, chainHub, vowTools },
 ) => {
  trace('med-rec start contract');
 
@@ -71,7 +72,7 @@ const contract = async (
 
   // Create storage node for patient data
   const patientDataRoot = await E(privateArgs.storageNode).makeChildNode(
-    'patients',
+    'patients'
   );
 
   /**
@@ -92,10 +93,13 @@ const contract = async (
    * Store patient data in VStorage
    * @param {string} patientId
    * @param {object} data
+   * @returns {Promise<Vow<any>>}
    */
   const storePatientData = async (patientId, data) => {
-    const patientNode = await E(patientDataRoot).makeChildNode(patientId);
-    await E(patientNode).setValue(JSON.stringify(data));
+    // UNTIL https://github.com/Agoric/agoric-sdk/issues/9066
+    const patientNode = E(patientDataRoot).makeChildNode(patientId);
+    /** @type {(msg: string) => Vow<void>} */
+    return vowTools.watch(E(patientNode).setValue(JSON.stringify(data)));
   };
 
   /**
@@ -152,6 +156,20 @@ const contract = async (
   const orchestrated = orchestrateAll(flows, ctx);
   const { publishMedRec } = orchestrated;
 
+  // Add initial dummy patient
+  const dummyPatient = {
+    patientId: 'PATIENT-001',
+    name: 'John Doe',
+    age: 35,
+    gender: 'Male', 
+    bloodType: 'O+',
+  };
+
+  // if (!patientExists('PATIENT-001')) {
+    await storePatientData('PATIENT-001', dummyPatient);
+    await incrementPatientCount();
+  // }
+
   const publicFacet = zone.exo(
     'MedRec Public Facet',
     M.interface('MedRec PF', {
@@ -175,4 +193,4 @@ const contract = async (
 export const start = withOrchestration(contract);
 harden(start);
 
-/** @typedef {typeof start} MedRecContractStart */
+/** @typedef {typeof start} MedRecSF */

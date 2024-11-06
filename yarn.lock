@@ -113,7 +113,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/base-zone@npm:0.1.1-upgrade-18-dev-ef001c0.0+ef001c0":
+"@agoric/base-zone@npm:0.1.1-upgrade-18-dev-ef001c0.0+ef001c0, @agoric/base-zone@npm:^0.1.1-u18.0":
   version: 0.1.1-upgrade-18-dev-ef001c0.0
   resolution: "@agoric/base-zone@npm:0.1.1-upgrade-18-dev-ef001c0.0"
   dependencies:
@@ -570,7 +570,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/internal@npm:0.4.0-upgrade-18-dev-bf39b10.0+bf39b10, @agoric/internal@npm:^0.4.0-u17.1":
+"@agoric/internal@npm:0.4.0-upgrade-18-dev-bf39b10.0+bf39b10, @agoric/internal@npm:^0.4.0-u17.1, @agoric/internal@npm:^0.4.0-u18.0":
   version: 0.4.0-upgrade-18-dev-bf39b10.0
   resolution: "@agoric/internal@npm:0.4.0-upgrade-18-dev-bf39b10.0"
   dependencies:
@@ -1578,6 +1578,22 @@ __metadata:
     "@endo/patterns": "npm:^1.4.6"
     "@endo/promise-kit": "npm:^1.1.7"
   checksum: 10c0/67613e5832eacef41f13bd3e2072b734cbe804215765b2a32178f63aa16e614fc33f5084877b2e5c9aeb4d0ac69d3650d96b338d81c0237c09b85a43f4dd159c
+  languageName: node
+  linkType: hard
+
+"@agoric/vow@npm:0.2.0-u18.0":
+  version: 0.2.0-u18.0
+  resolution: "@agoric/vow@npm:0.2.0-u18.0"
+  dependencies:
+    "@agoric/base-zone": "npm:^0.1.1-u18.0"
+    "@agoric/internal": "npm:^0.4.0-u18.0"
+    "@endo/env-options": "npm:^1.1.7"
+    "@endo/errors": "npm:^1.2.7"
+    "@endo/eventual-send": "npm:^1.2.7"
+    "@endo/pass-style": "npm:^1.4.6"
+    "@endo/patterns": "npm:^1.4.6"
+    "@endo/promise-kit": "npm:^1.1.7"
+  checksum: 10c0/401670eb4fe5032b2770491e99b4f3d99e6d6dc3b0379f67b3c21299dba0b960c6c34f01b082614048779ee9645219d3989a58a56ce2c1fab614921aa7e1e42c
   languageName: node
   linkType: hard
 
@@ -6344,6 +6360,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "dapp-med-rec@workspace:."
   dependencies:
+    "@agoric/vow": "npm:0.2.0-u18.0"
     "@endo/far": "npm:^1.1.8"
     "@noble/hashes": "npm:^1.5.0"
     "@types/node": "npm:20.16.8"

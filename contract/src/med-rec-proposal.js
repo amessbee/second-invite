@@ -1,5 +1,4 @@
-// @ts-check
-import { E } from '@endo/far';
+import { heapVowE as E } from '@agoric/vow/vat.js';
 import { makeTracer } from '../tools/debug.js';
 
 /// <reference types="@agoric/vats/src/core/types-ambient"/>
@@ -9,11 +8,11 @@ import { makeTracer } from '../tools/debug.js';
  * @import {ERef} from '@endo/far';
  * @import {BootstrapManifest} from '@agoric/vats/src/core/lib-boot.js';
  * @import {ChainInfo, IBCConnectionInfo,} from '@agoric/orchestration';
- * @import {MedRecContractStart} from './med-rec-contract.js';
+ * @import {MedRecSF} from './med-rec-contract.js';
  * @import {ContractStartFunction} from '@agoric/zoe/src/zoeService/utils.js';
  */
 
-const trace = makeTracer('MedRecContractProposalCoreEval');
+const trace = makeTracer('');
 const { entries, fromEntries } = Object;
 
 trace('start proposal module evaluating');
@@ -70,124 +69,124 @@ export const allValues = async obj => {
 };
 
 /**
- * @param {BootstrapPowers & {installation: {consume: {MedRec: Installation<MedRecContractStart>}}}} permittedPowers
+ * @param {BootstrapPowers & {installation: {consume: {MedRec: Installation<MedRecSF>}}}} permittedPowers
  * @param {{options: {[contractName]: {
-*   bundleID: string;
-*   chainDetails: Record<string, ChainInfo>,
-* }}}} config
-*/
+ *   bundleID: string;
+ *   chainDetails: Record<string, ChainInfo>,
+ * }}}} config
+ */
 export const startMedRecContract = async (permittedPowers, config) => {
- trace('startMedRecContract()... 0.0.93', config);
- console.log(permittedPowers);
- console.log(config);
- const {
-   consume: {
-     agoricNames,
-     board,
-     chainTimerService,
-     localchain,
-     chainStorage,
-     cosmosInterchainService,
-     startUpgradable,
-   },
-   installation: {
-     consume: { MedRec: MedRecInstallation },
-   },
-   instance: {
-     // @ts-expect-error not a WellKnownName
-     produce: { MedRec: produceInstance },
-   },
- } = permittedPowers;
+  trace('startMedRecContract()...', config);
+  console.log(permittedPowers);
+  console.log(config);
+  const {
+    consume: {
+      agoricNames,
+      board,
+      chainTimerService,
+      localchain,
+      chainStorage,
+      cosmosInterchainService,
+      startUpgradable,
+    },
+    installation: {
+      consume: { MedRec: medRecInstallation },
+    },
+    instance: {
+      // @ts-expect-error not a WellKnownName
+      produce: { MedRec: produceInstance },
+    },
+  } = permittedPowers;
 
- const installation = await MedRecInstallation;
+  const installation = await medRecInstallation;
 
- const storageNode = await E(chainStorage).makeChildNode('MedRec');
- const marshaller = await E(board).getPublishingMarshaller();
+  const storageNode = await E(chainStorage).makeChildNode('MedRec');
+  const marshaller = await E(board).getPublishingMarshaller();
 
- const { chainDetails: nameToInfo = chainDetails } =
- config.options[contractName];
+  const { chainDetails: nameToInfo = chainDetails } =
+    config.options[contractName];
 
-/** @type {StartUpgradableOpts<ContractStartFunction & MedRecContractStart>} **/
-const startOpts = {
- label: 'MedRec',
- installation,
- terms: { chainDetails: nameToInfo },
- privateArgs: {
-   localchain: await localchain,
-   orchestrationService: await cosmosInterchainService,
-   storageNode,
-   timerService: await chainTimerService,
-   agoricNames: await agoricNames,
-   marshaller,
- },
-};
+  /** @type {StartUpgradableOpts<ContractStartFunction & MedRecSF>} **/
+  const startOpts = {
+    label: 'MedRec',
+    installation,
+    terms: { chainDetails: nameToInfo },
+    privateArgs: {
+      localchain: await localchain,
+      orchestrationService: await cosmosInterchainService,
+      storageNode,
+      timerService: await chainTimerService,
+      agoricNames: await agoricNames,
+      marshaller,
+    },
+  };
 
-trace('startOpts', startOpts);
-const { instance } = await E(startUpgradable)(startOpts);
+  trace('startOpts', startOpts);
+  const { instance } = await E(startUpgradable)(startOpts);
 
-trace(contractName, '(re)started WITH RESET');
-produceInstance.reset();
-produceInstance.resolve(instance);
+  trace(contractName, '(re)started WITH RESET');
+  produceInstance.reset();
+  produceInstance.resolve(instance);
 };
 
 /** @type {BootstrapManifest} */
-const MedRecManifest = {
-[startMedRecContract.name]: {
- consume: {
-   agoricNames: true,
-   board: true,
-   chainStorage: true,
-   startUpgradable: true,
-   zoe: true,
-   localchain: true,
-   chainTimerService: true,
-   cosmosInterchainService: true,
- },
- installation: {
-   produce: { MedRec: true },
-   consume: { MedRec: true },
- },
- instance: {
-   produce: { MedRec: true },
- },
-},
+const medRecManifest = {
+  [startMedRecContract.name]: {
+    consume: {
+      agoricNames: true,
+      board: true,
+      chainStorage: true,
+      startUpgradable: true,
+      zoe: true,
+      localchain: true,
+      chainTimerService: true,
+      cosmosInterchainService: true,
+    },
+    installation: {
+      produce: { MedRec: true },
+      consume: { MedRec: true },
+    },
+    instance: {
+      produce: { MedRec: true },
+    },
+  },
 };
-harden(MedRecManifest);
+harden(medRecManifest);
 
 export const getManifestForMedRec = (
-{ restoreRef },
-{ installKeys, chainDetails },
+  { restoreRef },
+  { installKeys, chainDetails },
 ) => {
-trace('getManifestForMedRec', installKeys);
-return harden({
- manifest: MedRecManifest,
- installations: {
-   [contractName]: restoreRef(installKeys[contractName]),
- },
- options: {
-   [contractName]: { chainDetails },
- },
-});
+  trace('getManifestForMedRec', installKeys);
+  return harden({
+    manifest: medRecManifest,
+    installations: {
+      [contractName]: restoreRef(installKeys[contractName]),
+    },
+    options: {
+      [contractName]: { chainDetails },
+    },
+  });
 };
 
 export const permit = harden({
-consume: {
- agoricNames: true,
- board: true,
- chainStorage: true,
- startUpgradable: true,
- zoe: true,
- localchain: true,
- chainTimerService: true,
- cosmosInterchainService: true,
-},
-installation: {
- consume: { MedRec: true },
- produce: { MedRec: true },
-},
-instance: { produce: { MedRec: true } },
-brand: { consume: { BLD: true, IST: true }, produce: {} },
-issuer: { consume: { BLD: true, IST: true }, produce: {} },
+  consume: {
+    agoricNames: true,
+    board: true,
+    chainStorage: true,
+    startUpgradable: true,
+    zoe: true,
+    localchain: true,
+    chainTimerService: true,
+    cosmosInterchainService: true,
+  },
+  installation: {
+    consume: { MedRec: true },
+    produce: { MedRec: true },
+  },
+  instance: { produce: { MedRec: true } },
+  brand: { consume: { BLD: true, IST: true }, produce: {} },
+  issuer: { consume: { BLD: true, IST: true }, produce: {} },
 });
 
 export const main = startMedRecContract;

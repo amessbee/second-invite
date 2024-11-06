@@ -76,6 +76,7 @@
     "@agoric/orchestration": "patch:@agoric/orchestration@npm%3A0.2.0-upgrade-17-dev-ec448b0.0#~/.yarn/patches/@agoric-orchestration-npm-0.2.0-upgrade-17-dev-ec448b0.0-f94046c01d.patch",
     "@agoric/store": "^0.9.3-u17.1",
     "@agoric/vats": "^0.16.0-u17.1",
+    "@agoric/vow": "0.2.0-u18.0",
     "@agoric/zoe": "^0.26.3-u17.1",
     "@endo/bundle-source": "^3.4.0",
     "@endo/errors": "^1.2.4",

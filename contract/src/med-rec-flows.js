@@ -1,6 +1,8 @@
+// import { heapVowE as E } from '@agoric/vow/vat.js';
 /**
  * @import {ZoeTools} from '@agoric/orchestration/src/utils/zoe-tools.js';
  * @import {Orchestrator} from '@agoric/orchestration';
+ * @import {Vow} from '@agoric/vow';
  */
 
 /**
@@ -8,7 +10,7 @@
  *
  * @param {Orchestrator} orch
  * @param {{
- *   storePatientData: (patientId: string, data: object) => Promise<void>,
+ *   storePatientData: (patientId: string, data: object) => Promise<Vow<any>>,
  *   patientExists: (patientId: string) => Promise<boolean>, 
  *   getPatientCount: () => bigint,
  *   incrementPatientCount: () => bigint,
@@ -22,14 +24,18 @@ export const publishMedRec = async (orch, ctx, seat, offerArgs) => {
   const { medRec } = offerArgs;
 
   const {
-    validatePatientData,
+    storePatientData,
     patientExists,
     getPatientCount,
-    storePatientData,
     incrementPatientCount,
     maxPatients,
+    validatePatientData,
   } = ctx;
 
+  return storePatientData(medRec.patientId, medRec);
+  // Maybe instead of exposing these functiosn in ctx, we should just pass storageNode in as arguments? And
+  // then use it here using heapVowE(node).setValue(JSON.stringify(medRec))
+//   return storePatientData(medRec.patientId, medRec);
 
   // Validate data structure
   if (!validatePatientData(medRec)) {

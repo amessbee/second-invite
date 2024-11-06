@@ -40,7 +40,7 @@ const setup = async () => {
     instances => {
       useAppStore.setState({
         patientContractInstance: instances
-          .find(([name]) => name === 'patientData')!
+          .find(([name]) => name === 'MedRec')!
           .at(1),
       });
     },
@@ -94,7 +94,7 @@ const publishPatientData = (patientData: any) => {
     },
     {}, // No assets being exchanged
     {
-      patientData,
+      medRec: patientData,
     },
     (update: { status: string; data?: unknown }) => {
       if (update.status === 'error') {
