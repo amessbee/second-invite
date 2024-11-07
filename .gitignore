@@ -30,3 +30,6 @@ start-med-rec-plan.json
 # Synpress directories and files
 screenshots
 videos
+startMedRecContract-permit.json
+startMedRecContract-plan.json
+startMedRecContract.js
