@@ -18,4 +18,6 @@ This is how the data looks like in VStorage:
 
 ## Getting started
 
-Follow the instructions at `agoric-sdk/multichain-testing/README.md` to setup the environment. Once up and running, you can deploy the dapp with `make deploy` inside the `contract` directory.
+- Follow the instructions at [`agoric-sdk/multichain-testing/README.md`](https://github.com/Agoric/agoric-sdk/tree/master/multichain-testing) to setup the environment. 
+- Once up and running, you can deploy the dapp with `make deploy` inside the `contract` directory.
+- You can then run the dapp with `yarn start:ui` inside the root directory to launch the user interface.
