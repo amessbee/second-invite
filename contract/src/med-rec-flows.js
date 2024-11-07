@@ -1,4 +1,4 @@
-// import { heapVowE as E } from '@agoric/vow/vat.js';
+import { heapVowE as E } from '@agoric/vow/vat.js';
 /**
  * @import {ZoeTools} from '@agoric/orchestration/src/utils/zoe-tools.js';
  * @import {Orchestrator} from '@agoric/orchestration';
@@ -10,12 +10,9 @@
  *
  * @param {Orchestrator} orch
  * @param {{
- *   storePatientData: (patientId: string, data: object) => Promise<Vow<any>>,
- *   patientExists: (patientId: string) => Promise<boolean>, 
- *   getPatientCount: () => bigint,
- *   incrementPatientCount: () => bigint,
- *   maxPatients: bigint,
- *   validatePatientData: (data: object) => boolean
+ *   vowTools: any,
+ *   patientDataRoot: any,
+ *   maxPatients: bigint
  * }} ctx
  * @param {ZCFSeat} seat
  * @param {{ medRec: object }} offerArgs
@@ -23,43 +20,48 @@
 export const publishMedRec = async (orch, ctx, seat, offerArgs) => {
   const { medRec } = offerArgs;
 
-  const {
-    storePatientData,
-    patientExists,
-    getPatientCount,
-    incrementPatientCount,
-    maxPatients,
-    validatePatientData,
-  } = ctx;
-
-  return storePatientData(medRec.patientId, medRec);
-  // Maybe instead of exposing these functiosn in ctx, we should just pass storageNode in as arguments? And
-  // then use it here using heapVowE(node).setValue(JSON.stringify(medRec))
-//   return storePatientData(medRec.patientId, medRec);
+  const { patientDataRoot, vowTools } = ctx;
 
   // Validate data structure
-  if (!validatePatientData(medRec)) {
-    console.error('Invalid patient data structure');
-    return harden(new Error('Invalid patient data structure'));
+  const requiredFields = ['patientId', 'name', 'age', 'gender', 'bloodType'];
+  if (medRec.photo) {
+    if (
+      typeof medRec.photo !== 'string' ||
+      !medRec.photo.startsWith('data:image/')
+    ) {
+      return harden(new Error('Invalid patient photo data structure'));
+    }
+  }
+  if (
+    !requiredFields.every(
+      field =>
+        Object.prototype.hasOwnProperty.call(medRec, field) &&
+        medRec[field] !== null &&
+        medRec[field] !== undefined,
+    )
+  ) {
+    return harden(
+      new Error('Invalid patient data structure - missing required fields'),
+    );
   }
 
+  // Check if patient already exists
+//   try {
+//     const patientNode = await E(patientDataRoot).makeChildNode(patientId);
+//     const existingData = await E(patientNode).getValue();
+//     const isNewPatient = existingData == null || existingData == undefined;
+//   } catch {
+//     return harden(
+//       new Error('Error: Trying to access VStorage patient data root'),
+//     );
+//   }
+
   try {
-    // Check if adding a new patient (not updating existing)
-    const isNewPatient = !(await patientExists(medRec.patientId));
-
-    // Check maxPatients limit for new patients
-    if (isNewPatient && (await getPatientCount()) >= maxPatients) {
-      console.error('Maximum number of patients reached');
-      return harden(new Error('Maximum number of patients reached'));
-    }
-
-    // Store the patient data
-    await storePatientData(medRec.patientId, medRec);
-
-    // Update patient count for new patients
-    if (isNewPatient) {
-      await incrementPatientCount();
-    }
+    // UNTIL https://github.com/Agoric/agoric-sdk/issues/9066
+    const patientNode = E(patientDataRoot).makeChildNode(medRec.patientId);
+    /** @type {(msg: string) => Vow<void>} */
+    // vowTools.watch(E(patientNode).setValue(JSON.stringify(medRec)));
+    await E(patientNode).setValue(JSON.stringify(medRec));
 
     seat.exit();
     return 'Patient data published successfully';

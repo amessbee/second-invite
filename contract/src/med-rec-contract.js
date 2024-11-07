@@ -30,7 +30,6 @@ const OrchestrationPowersShape = M.splitRecord({
   agoricNames: M.remotable('agoricNames'),
 });
 
-
 /** @type {ContractMeta} */
 export const meta = {
   privateArgsShape: M.and(
@@ -48,127 +47,40 @@ const trace = makeTracer('MedRecContract');
 
 /**
  * @typedef {{
-*   chainDetails: Record<string, CosmosChainInfo>
-* }} MedRecTerms
-*
-* @param {ZCF} zcf
-* @param {OrchestrationPowers & {
-*   marshaller: Marshaller;
-* }} privateArgs
-* @param {Zone} zone
-* @param {OrchestrationTools} tools
-*/
+ *   chainDetails: Record<string, CosmosChainInfo>
+ * }} MedRecTerms
+ *
+ * @param {ZCF} zcf
+ * @param {OrchestrationPowers & {
+ *   marshaller: Marshaller;
+ * }} privateArgs
+ * @param {Zone} zone
+ * @param {OrchestrationTools} tools
+ */
 const contract = async (
- zcf,
- privateArgs,
- zone,
- { orchestrateAll, zoeTools, chainHub, vowTools },
+  zcf,
+  privateArgs,
+  zone,
+  { orchestrateAll, zoeTools, chainHub, vowTools },
 ) => {
- trace('med-rec start contract');
+  trace('med-rec start contract');
 
   // const { maxPatients } = zcf.getTerms();
   const maxPatients = 100n;
-  let patientCount = 0n;
 
   // Create storage node for patient data
   const patientDataRoot = await E(privateArgs.storageNode).makeChildNode(
-    'patients'
+    'patients',
   );
-
-  /**
-   * Get current patient count from storage
-   * @returns {bigint}
-   */
-  const getPatientCount = () => patientCount;
-
-  /**
-   * Update patient count in storage
-   */
-  const incrementPatientCount = () => {
-    patientCount += 1n;
-    return patientCount;
-  };
-
-  /**
-   * Store patient data in VStorage
-   * @param {string} patientId
-   * @param {object} data
-   * @returns {Promise<Vow<any>>}
-   */
-  const storePatientData = async (patientId, data) => {
-    // UNTIL https://github.com/Agoric/agoric-sdk/issues/9066
-    const patientNode = E(patientDataRoot).makeChildNode(patientId);
-    /** @type {(msg: string) => Vow<void>} */
-    return vowTools.watch(E(patientNode).setValue(JSON.stringify(data)));
-  };
-
-  /**
-   * Check if patient already exists
-   * @param {string} patientId
-   * @returns {Promise<boolean>}
-   */
-  const patientExists = async patientId => {
-    try {
-      const patientNode = await E(patientDataRoot).makeChildNode(patientId);
-      const existingData = await E(patientNode).getValue();
-      return existingData !== null && existingData !== undefined;
-    } catch {
-      return false;
-    }
-  };
-
-  /**
-   * Validate patient data structure
-   * @param {object} data
-   */
-  const validatePatientData = data => {
-    const requiredFields = ['patientId', 'name', 'age', 'gender', 'bloodType'];
-    if (data.photo) {
-      if (typeof data.photo !== 'string' || !data.photo.startsWith('data:image/')) {
-        return false;
-      }
-    }
-    return requiredFields.every(
-      field =>
-        Object.prototype.hasOwnProperty.call(data, field) &&
-        data[field] !== null &&
-        data[field] !== undefined,
-    );
-  };
-
-  const proposalShape = harden({
-    exit: M.any(),
-    give: M.any(),
-    want: M.any(),
-  });
 
   // Context for flows
   const ctx = {
-    validatePatientData: validatePatientData,
-    patientExists: patientExists,
-    getPatientCount: getPatientCount  ,
-    storePatientData: storePatientData,
-    incrementPatientCount: incrementPatientCount,
+    vowTools: vowTools,
+    patientDataRoot: patientDataRoot,
     maxPatients: maxPatients,
-  };
+  };  
 
-  // @ts-expect-error XXX ZCFSeat not Passable
-  const orchestrated = orchestrateAll(flows, ctx);
-  const { publishMedRec } = orchestrated;
-
-  // Add initial dummy patient
-  const dummyPatient = {
-    patientId: 'PATIENT-001',
-    name: 'John Doe',
-    age: 35,
-    gender: 'Male', 
-    bloodType: 'O+',
-  };
-
-  // if (!patientExists('PATIENT-001')) {
-    await storePatientData('PATIENT-001', dummyPatient);
-    await incrementPatientCount();
-  // }
+  const { publishMedRec } = orchestrateAll(flows, ctx);
 
   const publicFacet = zone.exo(
     'MedRec Public Facet',

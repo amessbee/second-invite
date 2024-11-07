@@ -66,7 +66,7 @@ const disconnectWallet = () => {
   useAppStore.setState({ wallet: undefined });
 };
 
-const publishPatientData = (patientData: any) => {
+const publishMedRec = (medRec: any) => {
   const { wallet, patientContractInstance } = useAppStore.getState();
   if (!patientContractInstance) {
     toast.error('No instance of Smart Contract found on chain!', {
@@ -94,7 +94,7 @@ const publishPatientData = (patientData: any) => {
     },
     {}, // No assets being exchanged
     {
-      medRec: patientData,
+      medRec: medRec,
     },
     (update: { status: string; data?: unknown }) => {
       if (update.status === 'error') {
@@ -119,7 +119,7 @@ const publishPatientData = (patientData: any) => {
   );
 };
 
-const updatePatientData = (patientId: string, patientData: any) => {
+const updateMedRec = (patientId: string, medRec: any) => {
   const { wallet, patientContractInstance } = useAppStore.getState();
   if (!patientContractInstance) {
     toast.error('No instance of Smart Contract found on chain!', {
@@ -141,8 +141,7 @@ const updatePatientData = (patientId: string, patientData: any) => {
     },
     {}, // No assets being exchanged
     {
-      patientId,
-      patientData,
+      medRec: medRec,
     },
     (update: { status: string; data?: unknown }) => {
       if (update.status === 'error') {
@@ -167,7 +166,7 @@ const updatePatientData = (patientId: string, patientData: any) => {
   );
 };
 
-const PatientDataForm = () => {
+const MedRecForm = () => {
   const [formData, setFormData] = useState({
     patientId: 'PAT-2024-001',
     name: 'Alice Doe',
@@ -204,7 +203,7 @@ const PatientDataForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    publishPatientData(formData);
+    publishMedRec(formData);
   };
 
   return (
@@ -435,7 +434,7 @@ const UpdatePatientForm = () => {
   useEffect(() => {
     const fetchPatientList = async () => {
       const response = await fetch(
-        `${ENDPOINTS.API}/agoric/vstorage/children/published.patientData.patients`,
+        `${ENDPOINTS.API}/agoric/vstorage/children/published.MedRec.patients`,
       );
       const data = await response.json();
       setPatients(data.children);
@@ -449,12 +448,12 @@ const UpdatePatientForm = () => {
     if (!patientId) return;
 
     const response = await fetch(
-      `${ENDPOINTS.API}/agoric/vstorage/data/published.patientData.patients.${patientId}`,
+      `${ENDPOINTS.API}/agoric/vstorage/data/published.MedRec.patients.${patientId}`,
     );
     const data = await response.json();
     const parsedData = JSON.parse(data.value).values[0];
-    const patientData = JSON.parse(parsedData);
-    setFormData(patientData);
+    const medRec = JSON.parse(parsedData);
+    setFormData(medRec);
   };
 
   const handleInputChange = (
@@ -469,7 +468,7 @@ const UpdatePatientForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updatePatientData(formData.patientId, formData);
+    updateMedRec(formData.patientId, formData);
   };
 
   return (
@@ -691,7 +690,7 @@ const UpdatePatientForm = () => {
 
 const PatientTab = () => {
   const [patients, setPatients] = useState<string[]>([]);
-  const [selectedPatientData, setSelectedPatientData] = useState<any | null>(
+  const [selectedMedRec, setSelectedMedRec] = useState<any | null>(
     null,
   );
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(
@@ -702,7 +701,7 @@ const PatientTab = () => {
   useEffect(() => {
     const fetchPatientList = async () => {
       const response = await fetch(
-        `${ENDPOINTS.API}/agoric/vstorage/children/published.patientData.patients`,
+        `${ENDPOINTS.API}/agoric/vstorage/children/published.MedRec.patients`,
       );
       const data = await response.json();
       setPatients(data.children);
@@ -712,14 +711,14 @@ const PatientTab = () => {
   }, []);
 
   // Fetch individual patient data
-  const fetchPatientData = async (patientId: string) => {
+  const fetchMedRec = async (patientId: string) => {
     setSelectedPatientId(patientId); // Set the selected patient ID
     const response = await fetch(
-      `${ENDPOINTS.API}/agoric/vstorage/data/published.patientData.patients.${patientId}`,
+      `${ENDPOINTS.API}/agoric/vstorage/data/published.MedRec.patients.${patientId}`,
     );
     let data = await response.json();
     const parsedData = JSON.parse(data.value);
-    setSelectedPatientData(parsedData.values[0]);
+    setSelectedMedRec(parsedData.values[0]);
   };
 
   return (
@@ -732,7 +731,7 @@ const PatientTab = () => {
           {patients.map(patientId => (
             <li
               key={patientId}
-              onClick={() => fetchPatientData(patientId)}
+              onClick={() => fetchMedRec(patientId)}
               className={`patient-item ${patientId === selectedPatientId ? 'highlighted' : ''}`}
             >
               <User className="patient-icon" />
@@ -742,12 +741,12 @@ const PatientTab = () => {
         </ul>
       </div>
 
-      {selectedPatientData && (
+      {selectedMedRec && (
         <div className="patient-details">
           <h3 className="details-title">Patient Details</h3>
           <div className="details-card">
             {(() => {
-              const data = JSON.parse(selectedPatientData);
+              const data = JSON.parse(selectedMedRec);
               return (
                 <div className="sections-container">
                   {/* Personal Information Section */}
@@ -945,7 +944,7 @@ export default function App() {
         </div>
 
         <div className="tab-content">
-          {activeTab === 'form' ? <PatientDataForm /> : 
+          {activeTab === 'form' ? <MedRecForm /> : 
            activeTab === 'update' ? <UpdatePatientForm /> : 
            <PatientTab />}
         </div>

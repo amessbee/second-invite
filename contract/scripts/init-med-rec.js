@@ -21,8 +21,8 @@ import { parseArgs } from 'node:util';
 import {
   getManifestForMedRec,
   startMedRecContract,
-} from '../../src/med-rec-proposal.js';
-import { makeAgd } from '../../tools/agd-lib.js';
+} from '../src/med-rec-proposal.js';
+import { makeAgd } from '../tools/agd-lib.js';
 
 /**
  * @import {CoreEvalBuilder} from '@agoric/deploy-script-support/src/externalTypes.js'
@@ -43,12 +43,12 @@ export const defaultProposalBuilder = async (
   { chainDetails },
 ) => {
   return harden({
-    sourceSpec: '../../src/med-rec-proposal.js',
+    sourceSpec: '../src/med-rec-proposal.js',
     getManifestCall: [
       getManifestForMedRec.name,
       {
         installKeys: {
-          MedRec: publishRef(install('../../src/med-rec-contract.js')),
+          MedRec: publishRef(install('../src/med-rec-contract.js')),
         },
         chainDetails,
       },

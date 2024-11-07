@@ -5,9 +5,9 @@ import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 import childProcess from 'node:child_process';
 import fsp from 'node:fs/promises';
 import { promisify } from 'node:util';
-import { makeContainer } from '../../contract/tools/agd-lib.js';
-import { makeDeployBuilder } from '../../contract/tools/deploy.js';
-import { makeE2ETools } from '../../contract/tools/e2e-tools.js';
+import { makeContainer } from '../tools/agd-lib.js';
+import { makeDeployBuilder } from '../tools/deploy.js';
+import { makeE2ETools } from '../tools/e2e-tools.js';
 
 async function main() {
   const builder = process.argv[2];
@@ -41,4 +41,4 @@ async function main() {
   }
 }
 
-main();
+main(); 
