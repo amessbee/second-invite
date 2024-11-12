@@ -28,8 +28,8 @@ import {
 import { Toaster, toast } from 'react-hot-toast';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { PublicCertificateView } from './components/publicCertificateView';
-import defaultSignature from '../public/signs_small.jpg';
-import defaultLogo from '../public/agoric_small.jpg';
+import defaultSignature from '/signs_small.jpg';
+import defaultLogo from '/agoric_small.jpg';
 
 
 const ENDPOINTS = {
