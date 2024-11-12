@@ -28,6 +28,8 @@ import {
 import { Toaster, toast } from 'react-hot-toast';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { PublicCertificateView } from './components/publicCertificateView';
+import defaultSignature from '../public/signs_small.jpg';
+import defaultLogo from '../public/agoric_small.jpg';
 
 
 const ENDPOINTS = {
@@ -188,8 +190,8 @@ const EdCertForm = () => {
     instituteAddress: '123 University Ave, Agoric University, TC 12345',
     certifyingAuthority: 'Jovonni Smith Martinez',
     authorityDesignation: 'Dev Relations Engineer',
-    authoritySignature: '', // Base64 image
-    instituteLogo: '', // Base64 image
+    authoritySignature: defaultSignature,
+    instituteLogo: defaultLogo,
     grade: 'A',
     achievements: 'Runner Up in Orchestration Hackathon 2024',
     specialization: 'Staking and Governance',
