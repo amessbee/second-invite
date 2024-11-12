@@ -90,7 +90,7 @@ button:focus-visible {
 }
 
 .form-container {
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
   background-color: #ffffff;
   border-radius: 12px;
@@ -100,7 +100,7 @@ button:focus-visible {
 
 /* Header Styles */
 .header {
-  background: linear-gradient(to right, #4e54c8, #8f94fb);
+  background: linear-gradient(to right, #c84e4e, #fb8f8f);
   padding: 1.5rem;
 }
 
@@ -682,8 +682,8 @@ select:focus {
 }
 
 .grade-section {
-  margin: 2rem 0;
-  padding: 1.5rem 2.5rem;
+  margin: 0.75rem 0;
+  padding: 0.05rem 2.5rem;
   border: none;
   background: linear-gradient(135deg, #ff6464, #c84e4e);
   color: white;
@@ -692,8 +692,8 @@ select:focus {
 }
 
 .achievements-section {
-  margin: 2rem 0;
-  padding: 1.5rem;
+  margin: 1rem 0;
+  padding: 0.05rem;
   background: #f8f9fa;
   border: none;
   border-radius: 12px;
@@ -747,5 +747,79 @@ select:focus {
     box-shadow: none;
     border: 15px solid #f8f8f8;
   }
+}
+
+.certificate-container::before,
+.certificate-container::after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-image: 
+    linear-gradient(45deg, transparent 48%, #gold 49%, #gold 51%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, #gold 49%, #gold 51%, transparent 52%);
+  background-size: 20px 20px;
+  background-repeat: repeat;
+  opacity: 0.3;
+}
+
+.certificate-container::before {
+  top: 0;
+  left: 0;
+  transform: rotate(0deg);
+}
+
+.certificate-container::after {
+  bottom: 0;
+  right: 0;
+  transform: rotate(180deg);
+}
+
+.header-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.certificate-content {
+  text-align: center;
+  border: 1px solid #f0f0f0;
+  margin: 20px;
+  padding: 20px;
+  background: 
+    linear-gradient(white, white) padding-box,
+    linear-gradient(45deg, #gold, #e5c100) border-box;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  position: relative;
+}
+
+.student-name::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #gold, transparent);
+}
+
+.achievements-section::before,
+.achievements-section::after {
+  content: '✦';
+  color: #gold;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+}
+
+.achievements-section::before {
+  top: -15px;
+}
+
+.achievements-section::after {
+  bottom: -15px;
 }
 

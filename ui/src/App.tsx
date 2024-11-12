@@ -17,6 +17,13 @@ import {
   User,
   LogOut,
   Building,
+  GraduationCap,
+  Award,
+  School,
+  FileText,
+  BookOpen,
+  Scroll,
+  UserCheck,
 } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -172,21 +179,21 @@ const updateCertificate = (certificateId: string, certificate: any) => {
 
 const EdCertForm = () => {
   const [formData, setFormData] = useState({
-    certificateId: 'CERT-2024-001',
+    certificateId: 'CERT-2024-002',
     studentName: 'John Doe',
-    courseName: 'Bachelor of Computer Science',
-    startDate: '2020-09-01',
-    endDate: '2024-06-30',
-    instituteName: 'Tech University',
-    instituteAddress: '123 University Ave, Tech City, TC 12345',
-    certifyingAuthority: 'Dr. Jane Smith',
-    authorityDesignation: 'Dean of Computer Science',
+    courseName: 'Orchestration Hackathon',
+    startDate: '2024-09-01',
+    endDate: '2024-10-30',
+    instituteName: 'Agoric',
+    instituteAddress: '123 University Ave, Agoric University, TC 12345',
+    certifyingAuthority: 'Jovonni Smith Martinez',
+    authorityDesignation: 'Dev Relations Engineer',
     authoritySignature: '', // Base64 image
     instituteLogo: '', // Base64 image
     grade: 'A',
-    achievements: 'Dean\'s List 2022-2024\nFirst Prize in Hackathon 2023',
-    specialization: 'Artificial Intelligence and Machine Learning',
-    certificateType: 'degree',
+    achievements: 'Runner Up in Orchestration Hackathon 2024',
+    specialization: 'Staking and Governance',
+    certificateType: 'workshop',
   });
 
   useEffect(() => {
@@ -216,11 +223,11 @@ const EdCertForm = () => {
     <div className="form-container">
       <form onSubmit={handleSubmit} className="form">
         <div className="sections-container">
-          {/* Certificate Information */}
+          {/* Basic Information */}
           <div className="section">
             <div className="section-header">
               <h2 className="section-title">
-                Certificate Information <ClipboardList className="icon" />
+                Basic Information <FileText className="icon" />
               </h2>
             </div>
             <div className="field-grid">
@@ -236,31 +243,6 @@ const EdCertForm = () => {
                 />
               </div>
               <div className="field">
-                <label className="label">Certificate Type</label>
-                <select
-                  name="certificateType"
-                  value={formData.certificateType}
-                  onChange={handleInputChange}
-                  className="input"
-                  required
-                >
-                  <option value="degree">Degree</option>
-                  <option value="diploma">Diploma</option>
-                  <option value="certificate">Certificate</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Student Information */}
-          <div className="section">
-            <div className="section-header">
-              <h2 className="section-title">
-                Student Information <User className="icon" />
-              </h2>
-            </div>
-            <div className="field-grid">
-              <div className="field">
                 <label className="label">Student Name</label>
                 <input
                   type="text"
@@ -270,6 +252,24 @@ const EdCertForm = () => {
                   className="input"
                   required
                 />
+              </div>
+              <div className="field">
+                <label className="label">Certificate Type</label>
+                <select
+                  name="certificateType"
+                  value={formData.certificateType}
+                  onChange={handleInputChange}
+                  className="input"
+                  required
+                >
+                  <option value="workshop">Workshop</option>
+                  <option value="degree">Degree</option>
+                  <option value="diploma">Diploma</option>
+                  <option value="short-course">Short Course</option>
+                  <option value="completion">Completion</option>
+                  <option value="attendance">Attendance</option>
+                  <option value="participation">Participation</option>
+                </select>
               </div>
               <div className="field">
                 <label className="label">Course/Degree Name</label>
@@ -285,11 +285,75 @@ const EdCertForm = () => {
             </div>
           </div>
 
+          {/* Authority Information */}
+          <div className="section">
+            <div className="section-header">
+              <h2 className="section-title">
+                Authority Information <UserCheck className="icon" />
+              </h2>
+            </div>
+            <div className="field-grid">
+              <div className="field">
+                <label className="label">Certifying Authority</label>
+                <input
+                  type="text"
+                  name="certifyingAuthority"
+                  value={formData.certifyingAuthority}
+                  onChange={handleInputChange}
+                  className="input"
+                  required
+                />
+              </div>
+              <div className="field">
+                <label className="label">Authority Designation</label>
+                <input
+                  type="text"
+                  name="authorityDesignation"
+                  value={formData.authorityDesignation}
+                  onChange={handleInputChange}
+                  className="input"
+                  required
+                />
+              </div>
+              <div className="field photo-field">
+                <label className="label">Authority Signature</label>
+                <div className="photo-upload-container">
+                  {formData.authoritySignature && (
+                    <img 
+                      src={formData.authoritySignature} 
+                      alt="Authority Signature" 
+                      className="photo-preview"
+                      style={{ maxWidth: '150px', marginBottom: '10px' }} 
+                    />
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setFormData(prev => ({
+                            ...prev,
+                            authoritySignature: reader.result as string
+                          }));
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                    className="input"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Institute Information */}
           <div className="section">
             <div className="section-header">
               <h2 className="section-title">
-                Institute Information <Building className="icon" />
+                Institute Information <School className="icon" />
               </h2>
             </div>
             <div className="field-grid">
@@ -353,7 +417,7 @@ const EdCertForm = () => {
           <div className="section">
             <div className="section-header">
               <h2 className="section-title">
-                Academic Information <ClipboardList className="icon" />
+                Academic Information <BookOpen className="icon" />
               </h2>
             </div>
             <div className="field-grid">
@@ -415,60 +479,6 @@ const EdCertForm = () => {
               </div>
             </div>
           </div>
-
-
-          {/* Authority Information */}
-          <div className="section">
-            <div className="section-header">
-              <h2 className="section-title">
-                Authority Information <UserCircle className="icon" />
-              </h2>
-            </div>
-            <div className="field-grid">
-              <div className="field">
-                <label className="label">Certifying Authority</label>
-                <input
-                  type="text"
-                  name="certifyingAuthority"
-                  value={formData.certifyingAuthority}
-                  onChange={handleInputChange}
-                  className="input"
-                  required
-                />
-              </div>
-              <div className="field photo-field">
-                <label className="label">Authority Signature</label>
-                <div className="photo-upload-container">
-                  {formData.authoritySignature && (
-                    <img 
-                      src={formData.authoritySignature} 
-                      alt="Authority Signature" 
-                      className="photo-preview"
-                      style={{ maxWidth: '150px', marginBottom: '10px' }} 
-                    />
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setFormData(prev => ({
-                            ...prev,
-                            authoritySignature: reader.result as string
-                          }));
-                        };
-                        reader.readAsDataURL(file);
-                      }
-                    }}
-                    className="input"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <button
@@ -476,7 +486,7 @@ const EdCertForm = () => {
           className={`submit-button ${!wallet ? 'disabled' : ''}`}
           disabled={!wallet}
         >
-          <Activity className="icon" />
+          <Award className="icon" />
           <span>Publish Certificate</span>
         </button>
       </form>
@@ -574,7 +584,7 @@ const UpdateCertificateForm = () => {
           <div className="section">
             <div className="section-header">
               <h2 className="section-title">
-                Personal Information <UserCircle className="icon" />
+                Personal Information <UserCheck className="icon" />
               </h2>
             </div>
             <div className="field-grid">
@@ -792,7 +802,7 @@ const UpdateCertificateForm = () => {
           className={`submit-button ${!wallet || !formData.certificateId ? 'disabled' : ''}`}
           disabled={!wallet || !formData.certificateId}
         >
-          <Activity className="icon" />
+          <Award className="icon" />
           <span>Update Certificate</span>
         </button>
       </form>
@@ -859,7 +869,7 @@ const CertificateTab = () => {
     <div className="view-container">
       <div className="certificate-list-container">
         <h2 className="section-title">
-          <ClipboardList className="icon" /> Certificates List
+          <Scroll className="icon" /> Certificates List
         </h2>
         <ul className="certificate-list">
           {certificates.map(certificateId => (
@@ -868,7 +878,7 @@ const CertificateTab = () => {
                 onClick={() => fetchCertificate(certificateId)}
                 className={`certificate-item ${certificateId === selectedCertificateId?.certificateId ? 'highlighted' : ''}`}
               >
-                <User className="icon" />
+                <Award className="icon" />
                 {certificateId}
               </div>
             </li>
@@ -885,7 +895,7 @@ const CertificateTab = () => {
               <div className="section">
                 <div className="section-header">
                   <h2 className="section-title">
-                    Personal Information <UserCircle className="icon" />
+                    Personal Information <UserCheck className="icon" />
                   </h2>
                 </div>
                 <div className="field-grid">
@@ -1017,7 +1027,7 @@ export function MainApp() {
       <div className="header">
         <div className="header-content">
           <div className="title-section">
-            <Activity className="icon" />
+            <GraduationCap className="icon" />
             <h1 className="title">Agoric Certificate Management</h1>
           </div>
           <div className="wallet-section">
@@ -1058,7 +1068,7 @@ export function MainApp() {
             className={`nav-tab ${activeTab === 'form' ? 'active' : ''}`}
             onClick={() => setActiveTab('form')}
           >
-            <ClipboardList className="icon" />
+            <Award className="icon" />
             Register New Certificate
           </div>
           <div
@@ -1066,7 +1076,7 @@ export function MainApp() {
             className={`nav-tab ${activeTab === 'update' ? 'active' : ''}`}
             onClick={() => setActiveTab('update')}
           >
-            <Activity className="icon" />
+            <FileText className="icon" />
             Update Certificate Record
           </div>
           <div
@@ -1074,7 +1084,7 @@ export function MainApp() {
             className={`nav-tab ${activeTab === 'view' ? 'active' : ''}`}
             onClick={() => setActiveTab('view')}
           >
-            <User className="icon" />
+            <Scroll className="icon" />
             View Current Certificates
           </div>
         </div>
