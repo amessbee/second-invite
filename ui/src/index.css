@@ -108,6 +108,8 @@ button:focus-visible {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .highlighted {
@@ -821,5 +823,31 @@ select:focus {
 
 .achievements-section::after {
   bottom: -15px;
+}
+
+.wallet-section {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  right: 2rem;
+  gap: 1rem;
+}
+
+.wallet-info {
+  min-width: 150px;
+  text-align: right;
+}
+
+.wallet-address {
+  font-family: monospace;
+  background-color: rgba(240, 240, 240, 0.9);
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.wallet-address-placeholder {
+  height: 2rem;
 }
 
