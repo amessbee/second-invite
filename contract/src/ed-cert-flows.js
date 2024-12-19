@@ -6,13 +6,13 @@ import { heapVowE as E } from '@agoric/vow/vat.js';
  */
 
 /**
- * Publishes patient data to storage
+ * Publishes certficate data to storage
  *
  * @param {Orchestrator} orch
  * @param {{
  *   vowTools: any,
- *   patientDataRoot: any,
- *   maxPatients: bigint
+ *   edCertRoot: any,
+ *   maxCertificates: bigint
  * }} ctx
  * @param {ZCFSeat} seat
  * @param {{ edCert: object }} offerArgs
@@ -45,7 +45,7 @@ export const publishEdCert = async (orch, ctx, seat, offerArgs) => {
       typeof edCert.photo !== 'string' ||
       !edCert.photo.startsWith('data:image/')
     ) {
-      return harden(new Error('Invalid patient photo data structure'));
+      return harden(new Error('Invalid certficate photo data structure'));
     }
   }
   if (
@@ -57,7 +57,7 @@ export const publishEdCert = async (orch, ctx, seat, offerArgs) => {
     )
   ) {
     return harden(
-      new Error('Invalid patient data structure - missing required fields'),
+      new Error('Invalid certficate data structure - missing required fields'),
     );
   }
 

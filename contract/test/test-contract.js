@@ -19,25 +19,25 @@ const test = anyTest;
 const makeTestContext = async _t => {
   const { zoeService: zoe } = makeZoeKitForTest();
   const bundleCache = await makeNodeBundleCache('bundles/', {}, s => import(s));
-  const bundle = await bundleCache.load(contractPath, 'edCertContract');
+  const bundle = await bundleCache.load(contractPath, 'medRecContract');
 
   return {
     zoe,
     bundle,
     bundleCache,
-    storageNode: makeMockChainStorageRoot().makeChildNode('patientData'),
+    storageNode: makeMockChainStorageRoot().makeChildNode('edCert'),
     board: makeMockChainStorageRoot().makeChildNode('boardAux'),
   };
 };
 
 test.before(async t => (t.context = await makeTestContext(t)));
 
-// Test successful patient data publishing
-test('Successfully publish valid patient data', async t => {
+// Test successful certficate data publishing
+test('Successfully publish valid certficate data', async t => {
   const { bundle, zoe, storageNode, board } = t.context;
 
   const terms = {
-    maxPatients: 1000n,
+    maxCertificates: 1000n,
   };
 
   const installation = await E(zoe).install(bundle);
@@ -48,8 +48,8 @@ test('Successfully publish valid patient data', async t => {
     { storageNode, board },
   );
 
-  const validPatientData = {
-    patientId: 'P12345',
+  const validEdCert = {
+    certificateId: 'P12345',
     name: 'John Doe',
     age: 30,
     gender: 'M',
@@ -59,19 +59,19 @@ test('Successfully publish valid patient data', async t => {
   const invitation = E(publicFacet).makePublishInvitation();
 
   const userSeat = await E(zoe).offer(invitation, undefined, undefined, {
-    patientData: validPatientData,
+    edCert: validEdCert,
   });
 
   const result = await E(userSeat).getOfferResult();
-  t.is(result, 'Patient data published successfully');
+  t.is(result, 'Certificate data published successfully');
 });
 
-// Test invalid patient data rejection
-test('Reject invalid patient data', async t => {
+// Test invalid certficate data rejection
+test('Reject invalid certficate data', async t => {
   const { bundle, zoe, storageNode, board } = t.context;
 
   const terms = {
-    maxPatients: 1000n,
+    maxCertificates: 1000n,
   };
 
   const installation = await E(zoe).install(bundle);
@@ -82,26 +82,26 @@ test('Reject invalid patient data', async t => {
     { storageNode, board },
   );
 
-  const invalidPatientData = {
-    patientId: 'P12345',
+  const invalidEdCert = {
+    certificateId: 'P12345',
     name: 'John Doe',
     // Missing required fields: age, gender, bloodType
   };
 
   const invitation = E(publicFacet).makePublishInvitation();
   const seat = await E(zoe).offer(invitation, undefined, undefined, {
-    patientData: invalidPatientData,
+    edCert: invalidEdCert,
   });
   const resultP = await E(seat).getOfferResult();
-  t.is(resultP.message, 'Invalid patient data structure');
+  t.is(resultP.message, 'Invalid certficate data structure');
 });
 
-// Test duplicate patient ID handling
-test('Handle duplicate patient ID', async t => {
+// Test duplicate certficate ID handling
+test('Handle duplicate certficate ID', async t => {
   const { bundle, zoe, storageNode, board } = t.context;
 
   const terms = {
-    maxPatients: 1000n,
+    maxCertificates: 1000n,
   };
 
   const installation = await E(zoe).install(bundle);
@@ -112,8 +112,8 @@ test('Handle duplicate patient ID', async t => {
     { storageNode, board },
   );
 
-  const patientData = {
-    patientId: 'P12345',
+  const edCert = {
+    certificateId: 'P12345',
     name: 'John Doe',
     age: 30,
     gender: 'M',
@@ -122,26 +122,26 @@ test('Handle duplicate patient ID', async t => {
 
   // First submission
   const invitation1 = E(publicFacet).makePublishInvitation();
-  await E(zoe).offer(invitation1, undefined, undefined, { patientData });
+  await E(zoe).offer(invitation1, undefined, undefined, { edCert });
 
   // Second submission with same ID
   const invitation2 = E(publicFacet).makePublishInvitation();
-  const duplicateData = { ...patientData, name: 'Jane Doe' };
+  const duplicateData = { ...edCert, name: 'Jane Doe' };
 
   const userSeat = await E(zoe).offer(invitation2, undefined, undefined, {
-    patientData: duplicateData,
+    edCert: duplicateData,
   });
 
   const result = await E(userSeat).getOfferResult();
-  t.is(result, 'Patient data published successfully');
+  t.is(result, 'Certificate data published successfully');
 });
 
-// Test maxPatients limit
-test('Enforce maxPatients limit', async t => {
+// Test maxCertificates limit
+test('Enforce maxCertificates limit', async t => {
   const { bundle, zoe, storageNode, board } = t.context;
 
   const terms = {
-    maxPatients: 1n, // Set limit to 1 patient
+    maxCertficates: 1n, // Set limit to 1 certficate
   };
 
   const installation = await E(zoe).install(bundle);
@@ -152,34 +152,34 @@ test('Enforce maxPatients limit', async t => {
     { storageNode, board },
   );
 
-  const patient1Data = {
-    patientId: 'P12345',
+  const certificate1Data = {
+    certificateId: 'P12345',
     name: 'John Doe',
     age: 30,
     gender: 'M',
     bloodType: 'O+',
   };
 
-  const patient2Data = {
-    patientId: 'P67890',
+  const certificate2Data = {
+    certificateId: 'P67890',
     name: 'Jane Doe',
     age: 25,
     gender: 'F',
     bloodType: 'A+',
   };
 
-  // First patient should succeed
+  // First certficate should succeed
   const invitation1 = E(publicFacet).makePublishInvitation();
   await E(zoe).offer(invitation1, undefined, undefined, {
-    patientData: patient1Data,
+    edCert: certificate1Data,
   });
 
-  // Second patient should fail due to maxPatients limit
+  // Second patcertficateient should fail due to maxCertificates limit
   const invitation2 = E(publicFacet).makePublishInvitation();
 
   const seat = await E(zoe).offer(invitation2, undefined, undefined, {
-    patientData: patient2Data,
+    edCert: certificate2Data,
   });
   const result = await E(seat).getOfferResult();
-  t.is(result.message, 'Maximum number of patients reached');
+  t.is(result.message, 'Maximum number of certificates reached');
 });

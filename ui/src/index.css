@@ -286,7 +286,7 @@ select:focus {
   overflow: hidden;
 }
 
-.patient-list-container {
+.certificate-list-container {
   width: 30%;
   padding: 1.5rem;
   background-color: #ffffff;
@@ -310,7 +310,7 @@ select:focus {
   margin-right: 0.5rem;
 }
 
-.patient-list {
+.certificate-list {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -319,7 +319,7 @@ select:focus {
   height: 0;
 }
 
-.patient-item {
+.certificate-item {
   padding: 0.75rem;
   display: flex;
   align-items: center;
@@ -328,21 +328,21 @@ select:focus {
   transition: background-color 0.3s;
 }
 
-.patient-item:hover {
+.certificate-item:hover {
   background-color: #ffe6e6;
 }
 
-.patient-item.highlighted {
+.certificate-item.highlighted {
   background-color: #ffbaba;
   font-weight: bold;
 }
 
-.patient-icon {
+.certificate-icon {
   margin-right: 0.75rem;
   color: #ff1818;
 }
 
-.patient-details {
+.certificate-details {
   width: 95%;
   padding: 0.5rem;
   background-color: #ffffff;
@@ -456,14 +456,14 @@ select:focus {
   }
 }
 
-.patient-selector {
+.certificate-selector {
   margin-bottom: 2rem;
   padding: 1rem;
   background-color: #f8f8f8;
   border-radius: 8px;
 }
 
-.patient-selector select {
+.certificate-selector select {
   width: 100%;
   padding: 0.75rem;
   font-size: 1rem;
@@ -472,21 +472,21 @@ select:focus {
   background-color: white;
 }
 
-.patient-list::-webkit-scrollbar {
+.certificate-list::-webkit-scrollbar {
   width: 8px;
 }
 
-.patient-list::-webkit-scrollbar-track {
+.certificate-list::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 4px;
 }
 
-.patient-list::-webkit-scrollbar-thumb {
+.certificate-list::-webkit-scrollbar-thumb {
   background: #c84e4e;
   border-radius: 4px;
 }
 
-.patient-list::-webkit-scrollbar-thumb:hover {
+.certificate-list::-webkit-scrollbar-thumb:hover {
   background: #a24343;
 }
 
@@ -506,55 +506,55 @@ select:focus {
   margin-bottom: 10px;
 }
 
-.patient-photo {
+.certificate-photo {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
 }
 
-.patient-photo img {
+.certificate-photo img {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.patient-details .field {
+.certificate-details .field {
   margin-bottom: 0.75rem;
 }
 
-.patient-details .input,
-.patient-details .textarea {
+.certificate-details .input,
+.certificate-details .textarea {
   padding: 0.35rem 0.5rem;
   font-size: 0.9rem;
   line-height: 1.2;
 }
 
-.patient-details .field-grid {
+.certificate-details .field-grid {
   gap: 0.75rem;
 }
 
-.patient-details .section {
+.certificate-details .section {
   padding: 1rem;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.patient-details .section-title {
+.certificate-details .section-title {
   font-size: 1.1rem;
   margin-bottom: 0.75rem;
 }
 
-.patient-details .label {
+.certificate-details .label {
   font-size: 0.9rem;
   margin-bottom: 0.25rem;
 }
 
-.patient-details .textarea {
+.certificate-details .textarea {
   min-height: 60px;
   max-height: 120px;
 }
 
-.patient-details .photo-field {
+.certificate-details .photo-field {
   grid-column: span 1;
 }
 
@@ -564,18 +564,18 @@ select:focus {
   gap: 0.75rem;
 }
 
-.patient-details .field-grid {
+.certificate-details .field-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
 }
 
-.patient-details .photo-field {
+.certificate-details .photo-field {
   grid-column: span 1;
   margin-top: 0.5rem;
 }
 
-.patient-details .photo-preview {
+.certificate-details .photo-preview {
   width: 100%;
   max-width: 200px;
   border-radius: 8px;

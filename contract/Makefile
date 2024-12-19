@@ -1,50 +1,115 @@
 CHAINID=agoriclocal
-USERNAME ?= user1
+USER1ADDR=$(shell agd keys show user1 -a --keyring-backend="test")
+ACCT_ADDR=$(USER1ADDR)
+BLD=000000ubld
 
-ADDR := $(shell kubectl exec -i agoriclocal-genesis-0 -c validator -- sh -c '\
-    if ! agd keys show $(USERNAME) >/dev/null 2>&1; then \
-        agd keys add $(USERNAME) --output json; \
-    else \
-        agd keys show $(USERNAME) --output json; \
-    fi' | jq -r ".address" \
-)
+ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
+ATOM=000000$(ATOM_DENOM)
 
-$(info USERNAME is $(USERNAME))
-$(info ADDR is $(ADDR))
+.PHONY: list
+# https://stackoverflow.com/a/73159833/7963
+list:
+	@make -npq : 2> /dev/null | grep -v PHONY |\
+		awk -v RS= -F: '$$1 ~ /^[^#%]+$$/ { print $$1 }'
 
-PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
-CLIENTADDR=agoric1rwwley550k9mmk6uq6mm6z4udrg8kyuyvfszjk
-CLIENT_OSMO_ADDR=osmo1rhvgsqq96n3qyv3u0zlwleyaunpmal6uhnam4z
+balance-q:
+	agd keys show user1 -a --keyring-backend="test"
+	agd query bank balances $(ACCT_ADDR)
 
-DEPLOY_SCRIPT=npx --no-install tsx ./scripts/deploy-cli.ts
+GAS_ADJUSTMENT=1.2
+SIGN_BROADCAST_OPTS=--keyring-backend=test --chain-id=$(CHAINID) \
+		--gas=auto --gas-adjustment=$(GAS_ADJUSTMENT) \
+		--yes -b block
 
-# Required for fund target
-fund-provision-pool:
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send faucet $(PROVISION_POOL_ADDR) 1000000000uist -y -b block;
-	sleep 2;
+mint100:
+	make FUNDS=1000$(ATOM) fund-acct
+	cd /usr/src/agoric-sdk && \
+		yarn --silent agops vaults open --wantMinted 100 --giveCollateral 100 >/tmp/want-ist.json && \
+		yarn --silent agops perf satisfaction --executeOffer /tmp/want-ist.json --from user1 --keyring-backend=test
 
-check-balance:
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd q bank balances $(ADDR)
+# https://agoric.explorers.guru/proposal/61
+lower-bundle-cost: bundles/lower-bundle-cost.json ./scripts/voteLatestProposalAndWait.sh
+	agd tx gov submit-proposal param-change bundles/lower-bundle-cost.json \
+	$(SIGN_BROADCAST_OPTS) \
+	--from user1
+	./scripts/voteLatestProposalAndWait.sh
+	# agd query swingset params
 
-fund-wallet:
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send faucet $(ADDR) 10000000000000uist -y -b block
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send faucet $(ADDR) 10000000000000ubld -y -b block
 
-provision-smart-wallet:
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx swingset provision-one wallet $(ADDR) SMART_WALLET --from ${ADDR} -y -b block
+bundles/swingset-params.json:
+	mkdir -p bundles/
+	agd query swingset params -o json >$@
 
-fund-osmo:
-	kubectl exec -i osmosislocal-genesis-0 -c validator -- osmosisd tx bank send faucet ${CLIENT_OSMO_ADDR} 9870000000uosmo --fees 1000uosmo -y;
+.ONESHELL:
+bundles/lower-bundle-cost.json: bundles/swingset-params.json
+	@read PARAMS < bundles/swingset-params.json; export PARAMS
+	node - <<- EOF >$@
+		const storageByte = '20000000';
+		const paramChange = {
+			title: 'Lower Bundle Cost to 0.02 IST/Kb (a la mainnet 61)',
+			description: '0.02 IST/Kb',
+			deposit: '10000000ubld',
+			changes: [{
+				subspace: 'swingset',
+				key: 'beans_per_unit',
+				value: '...',
+			}],
+		};
+		const params = JSON.parse(process.env.PARAMS);
+		const ix = params.beans_per_unit.findIndex(({key}) => key === 'storageByte');
+		params.beans_per_unit[ix].beans = storageByte;
+		paramChange.changes[0].value = params.beans_per_unit;
+		console.log(JSON.stringify(paramChange, null, 2));
+	EOF
 
-# Main targets
-fund: fund-provision-pool
-	make fund-wallet;
-	make provision-smart-wallet;
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send faucet ${CLIENTADDR} 10000000000000ubld -y;
-	sleep 2;
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send faucet ${CLIENTADDR} 10000000000000uist -y;
-	make fund-osmo
+# Keep mint4k around a while for compatibility
+mint4k:
+	make FUNDS=1000$(ATOM) fund-acct
+	cd /usr/src/agoric-sdk && \
+		yarn --silent agops vaults open --wantMinted 4000 --giveCollateral 1000 >/tmp/want4k.json && \
+		yarn --silent agops perf satisfaction --executeOffer /tmp/want4k.json --from user1 --keyring-backend=test
 
-deploy: fund
-	$(DEPLOY_SCRIPT) scripts/init-ed-cert.js
+FUNDS=321$(BLD)
+fund-acct:
+	agd tx bank send validator $(ACCT_ADDR) $(FUNDS) \
+	  $(SIGN_BROADCAST_OPTS) \
+	  -o json >,tx.json
+	jq '{code: .code, height: .height}' ,tx.json
 
+gov-q:
+	agd query gov proposals --output json | \
+		jq -c '.proposals[] | [.proposal_id,.voting_end_time,.status]'
+
+gov-voting-q:
+	agd query gov proposals --status=voting_period --output json | \
+		jq -c '.proposals[].proposal_id'
+
+PROPOSAL=1
+VOTE_OPTION=yes
+vote:
+	agd tx gov vote $(PROPOSAL) $(VOTE_OPTION) --from=validator \
+	  $(SIGN_BROADCAST_OPTS) \
+	  -o json >,tx.json
+	jq '{code: .code, height: .height}' ,tx.json
+
+instance-q:
+	agd query vstorage data published.agoricNames.instance -o json
+
+SCRIPT=start-ed-cert.js
+PERMIT=start-ed-cert-permit.json
+start-contract: $(SCRIPT) $(PERMIT) install-bundles
+	scripts/propose-start-contract.sh
+
+install-bundles: bundles/bundle-list
+	./scripts/install-bundles.sh
+
+build-proposal: bundles/bundle-list
+
+bundles/bundle-list $(SCRIPT) $(PERMIT):
+	./scripts/build-proposal.sh
+
+clean:
+	@rm -rf $(SCRIPT) $(PERMIT) bundles/
+
+wait-for-blocks:
+	TARGET_HEIGHT=1234 ./scripts/wait-for-blocks.sh

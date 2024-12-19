@@ -12,16 +12,16 @@
  */
 
 import { makeHelpers } from '@agoric/deploy-script-support';
-import { getManifestForPatientData } from '../src/ed-cert-proposal.js';
+import { getManifestForEdCert } from '../src/ed-cert-proposal.js';
 
 /** @type {import('@agoric/deploy-script-support/src/externalTypes.js').ProposalBuilder} */
-export const patientDataProposalBuilder = async ({ publishRef, install }) => {
+export const edCertProposalBuilder = async ({ publishRef, install }) => {
   return harden({
     sourceSpec: '../src/ed-cert-proposal.js',
     getManifestCall: [
-      getManifestForPatientData.name,
+      getManifestForEdCert.name,
       {
-        patientDataRef: publishRef(
+        edCertRef: publishRef(
           install(
             '../src/ed-cert-contract.js',
             '../bundles/bundle-ed-cert.js',
@@ -38,5 +38,5 @@ export const patientDataProposalBuilder = async ({ publishRef, install }) => {
 /** @type {DeployScriptFunction} */
 export default async (homeP, endowments) => {
   const { writeCoreProposal } = await makeHelpers(homeP, endowments);
-  await writeCoreProposal('start-ed-cert', patientDataProposalBuilder);
+  await writeCoreProposal('start-ed-cert', edCertProposalBuilder);
 };

@@ -1,6 +1,6 @@
 # Agoric Dapp Starter: Med Rec
 
-Med Rec is a simple Dapp for the [Agoric smart contract platform](https://docs.agoric.com/) that permits users to add medical records, in particular patient data, to Agoric blockchain. Users are given a simple form in which to enter patient's personal and medical information, and this data is sent to the contract to be added to the Agoric VStorage.
+Med Rec is a simple Dapp for the [Agoric smart contract platform](https://docs.agoric.com/) that permits users to add medical records, in particular certificate data, to Agoric blockchain. Users are given a simple form in which to enter Certificate's personal and medical information, and this data is sent to the contract to be added to the Agoric VStorage.
 
 _Note that this is a toy example dapp with no consideration made for privacy of sensitive information. All entered data maybe publicly visible depending on the hosting network of this dapp._
 

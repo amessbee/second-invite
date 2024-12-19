@@ -41,7 +41,7 @@ const watcher = makeAgoricChainStorageWatcher(ENDPOINTS.API, 'agoriclocal');
 
 interface AppState {
   wallet?: any;
-  patientContractInstance?: unknown;
+  certificateContractInstance?: unknown;
   brands?: Record<string, unknown>;
 }
 
@@ -52,8 +52,8 @@ const setup = async () => {
     [Kind.Data, 'published.agoricNames.instance'],
     instances => {
       useAppStore.setState({
-        patientContractInstance: instances
-          .find(([name]) => name === 'EdCert')!
+        certificateContractInstance: instances
+          .find(([name]) => name === 'edCert')!
           .at(1),
       });
     },
@@ -80,8 +80,8 @@ const disconnectWallet = () => {
 };
 
 const publishEdCert = (certificate: any) => {
-  const { wallet, patientContractInstance } = useAppStore.getState();
-  if (!patientContractInstance) {
+  const { wallet, certificateContractInstance } = useAppStore.getState();
+  if (!certificateContractInstance) {
     toast.error('No instance of Smart Contract found on chain!', {
       duration: 10000,
       position: 'bottom-right',
@@ -93,7 +93,7 @@ const publishEdCert = (certificate: any) => {
   wallet?.makeOffer(
     {
       source: 'contract',
-      instance: patientContractInstance,
+      instance: certificateContractInstance,
       publicInvitationMaker: 'makePublishInvitation',
       "fee": {
     "gas": "400000",
@@ -107,7 +107,7 @@ const publishEdCert = (certificate: any) => {
     },
     {}, // No assets being exchanged
     {
-      edCert: certificate,
+      certificateData: certificate,
     },
     (update: { status: string; data?: unknown }) => {
       if (update.status === 'error') {
@@ -133,8 +133,8 @@ const publishEdCert = (certificate: any) => {
 };
 
 const updateCertificate = (certificateId: string, certificate: any) => {
-  const { wallet, patientContractInstance } = useAppStore.getState();
-  if (!patientContractInstance) {
+  const { wallet, certificateContractInstance } = useAppStore.getState();
+  if (!certificateContractInstance) {
     toast.error('No instance of Smart Contract found on chain!', {
       duration: 10000,
       position: 'bottom-right',
@@ -145,7 +145,7 @@ const updateCertificate = (certificateId: string, certificate: any) => {
   wallet?.makeOffer(
     {
       source: 'contract',
-      instance: patientContractInstance,
+      instance: certificateContractInstance,
       publicInvitationMaker: 'makePublishInvitation',
       fee: {
         gas: 10_000_000,
@@ -190,8 +190,8 @@ const EdCertForm = () => {
     instituteAddress: '123 University Ave, Agoric University, TC 12345',
     certifyingAuthority: 'Jovonni Smith Martinez',
     authorityDesignation: 'Dev Relations Engineer',
-    authoritySignature: defaultSignature,
-    instituteLogo: defaultLogo,
+    // authoritySignature: defaultSignature,
+    // instituteLogo: defaultLogo,
     grade: 'A',
     achievements: 'Runner Up in Orchestration Hackathon 2024',
     specialization: 'Staking and Governance',
@@ -524,7 +524,7 @@ const UpdateCertificateForm = () => {
   useEffect(() => {
     const fetchCertificateList = async () => {
       const response = await fetch(
-        `${ENDPOINTS.API}/agoric/vstorage/children/published.EdCert.certificates`,
+        `${ENDPOINTS.API}/agoric/vstorage/children/published.edCert.certificates`,
       );
       const data = await response.json();
       setCertificates(data.children);
@@ -538,7 +538,7 @@ const UpdateCertificateForm = () => {
     if (!certificateId) return;
 
     const response = await fetch(
-      `${ENDPOINTS.API}/agoric/vstorage/data/published.EdCert.certificates.${certificateId}`,
+      `${ENDPOINTS.API}/agoric/vstorage/data/published.edCert.certificates.${certificateId}`,
     );
     const data = await response.json();
     const parsedData = JSON.parse(data.value).values[0];
@@ -838,7 +838,7 @@ const CertificateTab = () => {
   useEffect(() => {
     const fetchCertificateList = async () => {
       const response = await fetch(
-        `${ENDPOINTS.API}/agoric/vstorage/children/published.EdCert.certificates`,
+        `${ENDPOINTS.API}/agoric/vstorage/children/published.edCert.certificates`,
       );
       const data = await response.json();
       setCertificates(data.children);
@@ -852,7 +852,7 @@ const CertificateTab = () => {
     try {
       setSelectedCertificateId(certificateId);
       const response = await fetch(
-        `${ENDPOINTS.API}/agoric/vstorage/data/published.EdCert.certificates.${certificateId}`,
+        `${ENDPOINTS.API}/agoric/vstorage/data/published.edCert.certificates.${certificateId}`,
       );
       const data = await response.json();
       const parsedData = JSON.parse(data.value);
@@ -935,11 +935,11 @@ const CertificateTab = () => {
                 </div>
               </div>
 
-              {/* Medical Information Section */}
+              {/* Certificate Information Section */}
               <div className="section">
                 <div className="section-header">
                   <h2 className="section-title">
-                    Medical Information <Heart className="icon" />
+                    Certificate Information <Heart className="icon" />
                   </h2>
                 </div>
                 <div className="field-grid">

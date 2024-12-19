@@ -1,5 +1,6 @@
 services:
   agd:
+    container_name: agd
     # cf. https://github.com/Agoric/agoric-3-proposals
     image: ghcr.io/agoric/agoric-3-proposals:latest
     platform: linux/amd64
