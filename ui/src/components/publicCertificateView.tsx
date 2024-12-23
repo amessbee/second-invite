@@ -39,9 +39,9 @@ export const PublicCertificateView: React.FC = () => {
         <div className="certificate-header">
           <div className="header-content">
             {certificate.instituteLogo && (
-              <img 
-                src={certificate.instituteLogo} 
-                alt="Institute Logo" 
+              <img
+                src={certificate.instituteLogo}
+                alt="Institute Logo"
                 className="institute-logo"
               />
             )}
@@ -51,29 +51,33 @@ export const PublicCertificateView: React.FC = () => {
 
         <div className="certificate-content">
           <h2>Certificate of {certificate.certificateType}</h2>
-          
-          <p className="certificate-text">
-            This is to certify that
-          </p>
-          
+
+          <p className="certificate-text">This is to certify that</p>
+
           <h3 className="student-name">{certificate.studentName}</h3>
-          
+
           <p className="certificate-text">
             has successfully completed the course of study in
           </p>
-          
+
           <h3 className="course-name">{certificate.courseName}</h3>
-          
+
           <p className="certificate-text">
             with specialization in {certificate.specialization}
           </p>
-          
+
           <div className="grade-section">
-            <p>Grade Achieved: <strong>{certificate.grade}</strong></p>
+            <p>
+              Grade Achieved: <strong>{certificate.grade}</strong>
+            </p>
           </div>
 
           <div className="date-section">
-            <p>From: {new Date(certificate.startDate).toLocaleDateString()} <span style={{display: 'inline-block', width: '200px'}}></span> To: {new Date(certificate.endDate).toLocaleDateString()}</p>
+            <p>
+              From: {new Date(certificate.startDate).toLocaleDateString()}{' '}
+              <span style={{ display: 'inline-block', width: '200px' }}></span>{' '}
+              To: {new Date(certificate.endDate).toLocaleDateString()}
+            </p>
           </div>
 
           <div className="achievements-section">
@@ -83,18 +87,22 @@ export const PublicCertificateView: React.FC = () => {
 
           <div className="signature-section">
             {certificate.authoritySignature && (
-              <img 
-                src={certificate.authoritySignature} 
-                alt="Authority Signature" 
+              <img
+                src={certificate.authoritySignature}
+                alt="Authority Signature"
                 className="signature"
               />
             )}
             <p className="authority-name">{certificate.certifyingAuthority}</p>
-            <p className="authority-title">{certificate.authorityDesignation}</p>
+            <p className="authority-title">
+              {certificate.authorityDesignation}
+            </p>
           </div>
 
           <div className="certificate-footer">
-            <p className="certificate-id">Certificate ID: {certificate.certificateId}</p>
+            <p className="certificate-id">
+              Certificate ID: {certificate.certificateId}
+            </p>
             <p className="verification-note">
               This certificate can be verified at {window.location.origin}
             </p>

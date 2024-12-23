@@ -757,9 +757,20 @@ select:focus {
   position: absolute;
   width: 100px;
   height: 100px;
-  background-image: 
-    linear-gradient(45deg, transparent 48%, #gold 49%, #gold 51%, transparent 52%),
-    linear-gradient(-45deg, transparent 48%, #gold 49%, #gold 51%, transparent 52%);
+  background-image: linear-gradient(
+      45deg,
+      transparent 48%,
+      #gold 49%,
+      #gold 51%,
+      transparent 52%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 48%,
+      #gold 49%,
+      #gold 51%,
+      transparent 52%
+    );
   background-size: 20px 20px;
   background-repeat: repeat;
   opacity: 0.3;
@@ -788,7 +799,7 @@ select:focus {
   border: 1px solid #f0f0f0;
   margin: 20px;
   padding: 20px;
-  background: 
+  background:
     linear-gradient(white, white) padding-box,
     linear-gradient(45deg, #gold, #e5c100) border-box;
   border: 2px solid transparent;
@@ -850,4 +861,3 @@ select:focus {
 .wallet-address-placeholder {
   height: 2rem;
 }
-
