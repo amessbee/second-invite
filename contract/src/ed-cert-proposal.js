@@ -92,10 +92,7 @@ const edCertManifest = {
 };
 harden(edCertManifest);
 
-export const getManifestForEdCert = (
-  { restoreRef },
-  { edCertRef },
-) => {
+export const getManifestForEdCert = ({ restoreRef }, { edCertRef }) => {
   return harden({
     manifest: edCertManifest,
     installations: {

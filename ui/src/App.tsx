@@ -31,7 +31,6 @@ import { PublicCertificateView } from './components/publicCertificateView';
 import defaultSignature from '/signs_small.jpg';
 import defaultLogo from '/agoric_small.jpg';
 
-
 const ENDPOINTS = {
   RPC: 'http://localhost:26657',
   API: 'http://localhost:1317',
@@ -95,15 +94,15 @@ const publishEdCert = (certificate: any) => {
       source: 'contract',
       instance: certificateContractInstance,
       publicInvitationMaker: 'makePublishInvitation',
-      "fee": {
-    "gas": "400000",
-    "amount": [
-      {
-        "amount": "0",
-        "denom": "uist"
-      }
-    ]
-  },
+      fee: {
+        gas: '400000',
+        amount: [
+          {
+            amount: '0',
+            denom: 'uist',
+          },
+        ],
+      },
     },
     {}, // No assets being exchanged
     {
@@ -207,7 +206,9 @@ const EdCertForm = () => {
   }));
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -321,24 +322,24 @@ const EdCertForm = () => {
                 <label className="label">Authority Signature</label>
                 <div className="photo-upload-container">
                   {formData.authoritySignature && (
-                    <img 
-                      src={formData.authoritySignature} 
-                      alt="Authority Signature" 
+                    <img
+                      src={formData.authoritySignature}
+                      alt="Authority Signature"
                       className="photo-preview"
-                      style={{ maxWidth: '150px', marginBottom: '10px' }} 
+                      style={{ maxWidth: '150px', marginBottom: '10px' }}
                     />
                   )}
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => {
+                    onChange={e => {
                       const file = e.target.files?.[0];
                       if (file) {
                         const reader = new FileReader();
                         reader.onloadend = () => {
                           setFormData(prev => ({
                             ...prev,
-                            authoritySignature: reader.result as string
+                            authoritySignature: reader.result as string,
                           }));
                         };
                         reader.readAsDataURL(file);
@@ -374,24 +375,24 @@ const EdCertForm = () => {
                 <label className="label">Institute Logo</label>
                 <div className="photo-upload-container">
                   {formData.instituteLogo && (
-                    <img 
-                      src={formData.instituteLogo} 
-                      alt="Institute Logo" 
+                    <img
+                      src={formData.instituteLogo}
+                      alt="Institute Logo"
                       className="photo-preview"
-                      style={{ maxWidth: '150px', marginBottom: '10px' }} 
+                      style={{ maxWidth: '150px', marginBottom: '10px' }}
                     />
                   )}
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => {
+                    onChange={e => {
                       const file = e.target.files?.[0];
                       if (file) {
                         const reader = new FileReader();
                         reader.onloadend = () => {
                           setFormData(prev => ({
                             ...prev,
-                            instituteLogo: reader.result as string
+                            instituteLogo: reader.result as string,
                           }));
                         };
                         reader.readAsDataURL(file);
@@ -401,16 +402,16 @@ const EdCertForm = () => {
                   />
                 </div>
                 <div className="field">
-                <label className="label">Institute Address</label>
-                <input
-                  type="text"
-                  name="instituteAddress"
-                  value={formData.instituteAddress}
-                  onChange={handleInputChange}
-                  className="input"
-                  required
-                />
-              </div>
+                  <label className="label">Institute Address</label>
+                  <input
+                    type="text"
+                    name="instituteAddress"
+                    value={formData.instituteAddress}
+                    onChange={handleInputChange}
+                    className="input"
+                    required
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -445,7 +446,7 @@ const EdCertForm = () => {
                   required
                 />
               </div>
-              
+
               <div className="field">
                 <label className="label">Achievements</label>
                 <textarea
@@ -533,7 +534,9 @@ const UpdateCertificateForm = () => {
   }, []);
 
   // Fetch certificate data when selected
-  const handleCertificateSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleCertificateSelect = async (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     const certificateId = e.target.value;
     if (!certificateId) return;
 
@@ -547,7 +550,9 @@ const UpdateCertificateForm = () => {
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -702,24 +707,24 @@ const UpdateCertificateForm = () => {
                 <label className="label">Authority Signature</label>
                 <div className="photo-upload-container">
                   {formData.authoritySignature && (
-                    <img 
-                      src={formData.authoritySignature} 
-                      alt="Authority Signature" 
+                    <img
+                      src={formData.authoritySignature}
+                      alt="Authority Signature"
                       className="photo-preview"
-                      style={{ maxWidth: '150px', marginBottom: '10px' }} 
+                      style={{ maxWidth: '150px', marginBottom: '10px' }}
                     />
                   )}
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => {
+                    onChange={e => {
                       const file = e.target.files?.[0];
                       if (file) {
                         const reader = new FileReader();
                         reader.onloadend = () => {
                           setFormData(prev => ({
                             ...prev,
-                            authoritySignature: reader.result as string
+                            authoritySignature: reader.result as string,
                           }));
                         };
                         reader.readAsDataURL(file);
@@ -734,24 +739,24 @@ const UpdateCertificateForm = () => {
                 <label className="label">Institute Logo</label>
                 <div className="photo-upload-container">
                   {formData.instituteLogo && (
-                    <img 
-                      src={formData.instituteLogo} 
-                      alt="Institute Logo" 
+                    <img
+                      src={formData.instituteLogo}
+                      alt="Institute Logo"
                       className="photo-preview"
-                      style={{ maxWidth: '150px', marginBottom: '10px' }} 
+                      style={{ maxWidth: '150px', marginBottom: '10px' }}
                     />
                   )}
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => {
+                    onChange={e => {
                       const file = e.target.files?.[0];
                       if (file) {
                         const reader = new FileReader();
                         reader.onloadend = () => {
                           setFormData(prev => ({
                             ...prev,
-                            instituteLogo: reader.result as string
+                            instituteLogo: reader.result as string,
                           }));
                         };
                         reader.readAsDataURL(file);
@@ -832,7 +837,8 @@ interface Certificate {
 
 const CertificateTab = () => {
   const [certificates, setCertificates] = useState<string[]>([]);
-  const [selectedCertificateId, setSelectedCertificateId] = useState<Certificate | null>(null);
+  const [selectedCertificateId, setSelectedCertificateId] =
+    useState<Certificate | null>(null);
 
   // Fetch certificate list
   useEffect(() => {
@@ -903,34 +909,53 @@ const CertificateTab = () => {
                 <div className="field-grid">
                   <div className="field photo-field">
                     {selectedCertificateId.instituteLogo && (
-                      <img 
-                        src={selectedCertificateId.instituteLogo} 
-                        alt="Institute Logo" 
+                      <img
+                        src={selectedCertificateId.instituteLogo}
+                        alt="Institute Logo"
                         className="photo-preview"
-                        style={{ maxWidth: '200px', marginTop: '0px' }} 
+                        style={{ maxWidth: '200px', marginTop: '0px' }}
                       />
                     )}
                   </div>
                   <div className="field">
                     <label className="label">Certificate ID</label>
-                    <input type="text" value={selectedCertificateId.certificateId} className="input" readOnly />
+                    <input
+                      type="text"
+                      value={selectedCertificateId.certificateId}
+                      className="input"
+                      readOnly
+                    />
                   </div>
-                  
                 </div>
-                
+
                 {/* Right Column */}
                 <div className="field-column">
                   <div className="field">
                     <label className="label">Student Name</label>
-                    <input type="text" value={selectedCertificateId.studentName} className="input" readOnly />
+                    <input
+                      type="text"
+                      value={selectedCertificateId.studentName}
+                      className="input"
+                      readOnly
+                    />
                   </div>
                   <div className="field">
                     <label className="label">Course/Degree Name</label>
-                    <input type="text" value={selectedCertificateId.courseName} className="input" readOnly />
+                    <input
+                      type="text"
+                      value={selectedCertificateId.courseName}
+                      className="input"
+                      readOnly
+                    />
                   </div>
                   <div className="field">
                     <label className="label">Institute Name</label>
-                    <input type="text" value={selectedCertificateId.instituteName} className="input" readOnly />
+                    <input
+                      type="text"
+                      value={selectedCertificateId.instituteName}
+                      className="input"
+                      readOnly
+                    />
                   </div>
                 </div>
               </div>
@@ -945,24 +970,39 @@ const CertificateTab = () => {
                 <div className="field-grid">
                   <div className="field">
                     <label className="label">Grade</label>
-                    <input type="text" value={selectedCertificateId.grade} className="input" readOnly />
+                    <input
+                      type="text"
+                      value={selectedCertificateId.grade}
+                      className="input"
+                      readOnly
+                    />
                   </div>
                   <div className="field">
                     <label className="label">Achievements</label>
-                    <textarea value={selectedCertificateId.achievements} className="textarea" readOnly rows={4} />
+                    <textarea
+                      value={selectedCertificateId.achievements}
+                      className="textarea"
+                      readOnly
+                      rows={4}
+                    />
                   </div>
                   <div className="field">
                     <label className="label">Specialization</label>
-                    <textarea value={selectedCertificateId.specialization} className="textarea" readOnly rows={4} />
+                    <textarea
+                      value={selectedCertificateId.specialization}
+                      className="textarea"
+                      readOnly
+                      rows={4}
+                    />
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div className="share-link-container">
-            <a 
-              href={`${window.location.origin}/certificate/${selectedCertificateId.certificateId}`} 
-              target="_blank" 
+            <a
+              href={`${window.location.origin}/certificate/${selectedCertificateId.certificateId}`}
+              target="_blank"
               rel="noopener noreferrer"
               className="share-button"
             >
@@ -979,7 +1019,10 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/certificate/:certificateId" element={<PublicCertificateView />} />
+        <Route
+          path="/certificate/:certificateId"
+          element={<PublicCertificateView />}
+        />
         <Route path="/" element={<MainApp />} />
       </Routes>
     </Router>
@@ -1092,9 +1135,13 @@ export function MainApp() {
         </div>
 
         <div className="tab-content">
-          {activeTab === 'form' ? <EdCertForm /> : 
-           activeTab === 'update' ? <UpdateCertificateForm /> : 
-           <CertificateTab />}
+          {activeTab === 'form' ? (
+            <EdCertForm />
+          ) : activeTab === 'update' ? (
+            <UpdateCertificateForm />
+          ) : (
+            <CertificateTab />
+          )}
         </div>
       </div>
     </div>
