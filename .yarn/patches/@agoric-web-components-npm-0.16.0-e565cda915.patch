@@ -1,0 +1,26 @@
+diff --git a/dist/src/wallet-connection/walletConnection.js b/dist/src/wallet-connection/walletConnection.js
+index 95bd49a00fc7b3f010bc53fdaa86e2c0e723a171..1a3e52eb94a4a1c837e3cf3922a7b4b12279ad1b 100644
+--- a/dist/src/wallet-connection/walletConnection.js
++++ b/dist/src/wallet-connection/walletConnection.js
+@@ -45,7 +45,7 @@ export const makeAgoricWalletConnection = async (chainStorageWatcher, rpc, onErr
+                 // https://github.com/Agoric/agoric-sdk/blob/1b5e57f17a043a43171621bbe3ef68131954f714/packages/zoe/src/zoeService/types.js#L213
+                 if (update.status.numWantsSatisfied > 0) {
+                     isFinished = true;
+-                    onStatusChange({ status: 'accepted' });
++                    onStatusChange({ status: 'accepted', data: update.status });
+                     return;
+                 }
+             }
+diff --git a/src/wallet-connection/walletConnection.ts b/src/wallet-connection/walletConnection.ts
+index 42bdd8060f35c06a8195fe5c7d9e21a847ab5ad0..887fd19e69b26b57721a36f14f9e728e3f649737 100644
+--- a/src/wallet-connection/walletConnection.ts
++++ b/src/wallet-connection/walletConnection.ts
+@@ -79,7 +79,7 @@ export const makeAgoricWalletConnection = async (
+         // https://github.com/Agoric/agoric-sdk/blob/1b5e57f17a043a43171621bbe3ef68131954f714/packages/zoe/src/zoeService/types.js#L213
+         if (update.status.numWantsSatisfied > 0) {
+           isFinished = true;
+-          onStatusChange({ status: 'accepted' });
++          onStatusChange({ status: 'accepted', data: update.status });
+           return;
+         }
+       }

@@ -19,12 +19,18 @@
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.28.0"
   },
+  "dependenciesMeta": {
+    "@agoric/web-components@0.16.0": {
+      "built": false,
+      "unplugged": true
+    }
+  },
   "devDependencies": {
     "@agoric/notifier": "^0.7.0-u16.1",
     "@agoric/rpc": "0.10.0",
     "@agoric/store": "^0.9.3-u16.0",
     "@agoric/ui-components": "^0.9.0",
-    "@agoric/web-components": "^0.16.0",
+    "@agoric/web-components": "patch:@agoric/web-components@npm%3A0.16.0#~/.yarn/patches/@agoric-web-components-npm-0.16.0-e565cda915.patch",
     "@testing-library/react": "^14.1.2",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
