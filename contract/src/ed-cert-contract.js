@@ -39,14 +39,21 @@ export const start = async (zcf, privateArgs) => {
    * @returns {Promise<object>} myObject
    */
   const publishHandler = async (seat, offerArgs) => {
-    const myObject = {
+    const crObject = {
       name: "Alice",
       age: 30,
       isStudent: false
     };
+    const invObject = await zcf.makeInvitation(
+      publishHandler,
+      'publish certificate data',
+      undefined,
+      proposalShape,
+    );
+
 
       seat.exit();      
-      return myObject;
+      return crObject;
   };
 
   const makePublishInvitation = () =>
