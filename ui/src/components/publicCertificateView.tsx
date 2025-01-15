@@ -13,7 +13,7 @@ export const PublicCertificateView: React.FC = () => {
     const fetchCertificate = async () => {
       try {
         const response = await fetch(
-          `${ENDPOINTS.API}/agoric/vstorage/data/published.EdCert.certificates.${certificateId}`,
+          `${ENDPOINTS.API}/agoric/vstorage/data/published.EdCert.TamperProofRecords.${certificateId}`,
         );
         const data = await response.json();
         const parsedData = JSON.parse(data.value);

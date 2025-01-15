@@ -34,6 +34,7 @@ const ENDPOINTS = {
   RPC: 'http://localhost:26657',
   API: 'http://localhost:1317',
 };
+let offerId = `edCert-${Date.now()}`;
 
 const watcher = makeAgoricChainStorageWatcher(ENDPOINTS.API, 'agoriclocal');
 
@@ -88,7 +89,7 @@ const publishEdCert = (certificate: any) => {
   }
 
   console.log(certificate);
-  const offerId = 123;
+  offerId = `edCert-${Date.now()}`
   wallet?.makeOffer(
     {
       source: 'contract',
@@ -120,11 +121,6 @@ const publishEdCert = (certificate: any) => {
           duration: 10000,
           position: 'bottom-right',
         });
-        const newCertificateId = prompt('Do you want to update the certificate ID? Leave empty to keep current ID:', certificate.certificateId);
-        const updatedCertificate = newCertificateId
-          ? { ...certificate, certificateId: newCertificateId }
-          : certificate;
-        updateCertificate(updatedCertificate.certificateId, updatedCertificate, offerId);
       }
       if (update.status === 'refunded') {
         toast.error('Publication rejected', {
@@ -137,7 +133,7 @@ const publishEdCert = (certificate: any) => {
   );
 };
 
-const updateCertificate = (certificateId: string, certificate: any, offerId: any) => {
+const updateCertificate = (certificateId: string, certificate: any) => {
   const { wallet, certificateContractInstance } = useAppStore.getState();
   if (!certificateContractInstance) {
     toast.error('No instance of Smart Contract found on chain!', {
@@ -149,8 +145,10 @@ const updateCertificate = (certificateId: string, certificate: any, offerId: any
 
   wallet?.makeOffer(
     {
-      source: 'purse',
+      source: 'continuing',
+      previousOffer: offerId,
       instance: certificateContractInstance,
+      invitationMakerName: 'makeSecondInvitation',
       publicInvitationMaker: 'makeSecondInvitation',
       description: 'SecondInvite',
       fee: {
@@ -160,7 +158,7 @@ const updateCertificate = (certificateId: string, certificate: any, offerId: any
     },
     {}, // No assets being exchanged
     {
-      certificate: certificate,
+      certificateData: certificate,
     },
     (update: { status: string; data?: unknown }) => {
       if (update.status === 'error') {
@@ -182,7 +180,6 @@ const updateCertificate = (certificateId: string, certificate: any, offerId: any
         });
       }
     },
-    offerId,
   );
 };
 
@@ -533,7 +530,7 @@ const UpdateCertificateForm = () => {
   useEffect(() => {
     const fetchCertificateList = async () => {
       const response = await fetch(
-        `${ENDPOINTS.API}/agoric/vstorage/children/published.edCert.certificates`,
+        `${ENDPOINTS.API}/agoric/vstorage/children/published.edCert.TamperProofRecords`,
       );
       const data = await response.json();
       setCertificates(data.children);
@@ -549,7 +546,7 @@ const UpdateCertificateForm = () => {
     if (!certificateId) return;
 
     const response = await fetch(
-      `${ENDPOINTS.API}/agoric/vstorage/data/published.edCert.certificates.${certificateId}`,
+      `${ENDPOINTS.API}/agoric/vstorage/data/published.edCert.TamperProofRecords.${certificateId}`,
     );
     const data = await response.json();
     const parsedData = JSON.parse(data.value).values[0];
@@ -852,7 +849,7 @@ const CertificateTab = () => {
   useEffect(() => {
     const fetchCertificateList = async () => {
       const response = await fetch(
-        `${ENDPOINTS.API}/agoric/vstorage/children/published.edCert.certificates`,
+        `${ENDPOINTS.API}/agoric/vstorage/children/published.edCert.TamperProofRecords`,
       );
       const data = await response.json();
       setCertificates(data.children);
@@ -866,7 +863,7 @@ const CertificateTab = () => {
     try {
       setSelectedCertificateId(certificateId);
       const response = await fetch(
-        `${ENDPOINTS.API}/agoric/vstorage/data/published.edCert.certificates.${certificateId}`,
+        `${ENDPOINTS.API}/agoric/vstorage/data/published.edCert.TamperProofRecords.${certificateId}`,
       );
       const data = await response.json();
       const parsedData = JSON.parse(data.value);

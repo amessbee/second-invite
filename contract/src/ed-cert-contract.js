@@ -31,6 +31,7 @@ export const start = async (zcf, privateArgs) => {
     give: M.any(),
     want: M.any(),
   });
+  const certificateIds = new Set();
 
   /**
    * Handle publishing of certificate data
@@ -42,11 +43,17 @@ export const start = async (zcf, privateArgs) => {
     const { certificateData } = offerArgs;
     const currentId = certificateData.certificateId;
 
+    if (certificateIds.has(currentId)) {
+      throw Error(`Certificate ID ${currentId} already exists`);
+    }
+
+    certificateIds.add(currentId);
+
     const edCertNode = await E(recordsDataRoot).makeChildNode(
       certificateData.certificateId,
     );
 
-    await E(edCertNode).setValue(certificateData.studentName);
+    await E(edCertNode).setValue(JSON.stringify(certificateData));
 
     seat.exit();
     return harden({
@@ -60,13 +67,7 @@ export const start = async (zcf, privateArgs) => {
                 throw new Error('Certificate ID mismatch');
               }
 
-              const edCertNode = await E(recordsDataRoot).makeChildNode(
-                certificateData.certificateId,
-              );
-
-              await E(edCertNode).setValue(
-                JSON.stringify(certificateData.studentName),
-              );
+              await E(edCertNode).setValue(JSON.stringify(certificateData));
               seat.exit();
             },
 
