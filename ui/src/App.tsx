@@ -28,8 +28,7 @@ import {
 import { Toaster, toast } from 'react-hot-toast';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { PublicCertificateView } from './components/publicCertificateView';
-import defaultSignature from '/signs_small.jpg';
-import defaultLogo from '/agoric_small.jpg';
+
 
 const ENDPOINTS = {
   RPC: 'http://localhost:26657',
@@ -89,6 +88,7 @@ const publishEdCert = (certificate: any) => {
   }
 
   console.log(certificate);
+  const offerId = 123;
   wallet?.makeOffer(
     {
       source: 'contract',
@@ -120,6 +120,11 @@ const publishEdCert = (certificate: any) => {
           duration: 10000,
           position: 'bottom-right',
         });
+        const newCertificateId = prompt('Do you want to update the certificate ID? Leave empty to keep current ID:', certificate.certificateId);
+        const updatedCertificate = newCertificateId
+          ? { ...certificate, certificateId: newCertificateId }
+          : certificate;
+        updateCertificate(updatedCertificate.certificateId, updatedCertificate, offerId);
       }
       if (update.status === 'refunded') {
         toast.error('Publication rejected', {
@@ -128,10 +133,11 @@ const publishEdCert = (certificate: any) => {
         });
       }
     },
+    offerId,
   );
 };
 
-const updateCertificate = (certificateId: string, certificate: any) => {
+const updateCertificate = (certificateId: string, certificate: any, offerId: any) => {
   const { wallet, certificateContractInstance } = useAppStore.getState();
   if (!certificateContractInstance) {
     toast.error('No instance of Smart Contract found on chain!', {
@@ -143,9 +149,10 @@ const updateCertificate = (certificateId: string, certificate: any) => {
 
   wallet?.makeOffer(
     {
-      source: 'contract',
+      source: 'purse',
       instance: certificateContractInstance,
-      publicInvitationMaker: 'makePublishInvitation',
+      publicInvitationMaker: 'makeSecondInvitation',
+      description: 'SecondInvite',
       fee: {
         gas: 10_000_000,
         // price: 0.001,
@@ -175,6 +182,7 @@ const updateCertificate = (certificateId: string, certificate: any) => {
         });
       }
     },
+    offerId,
   );
 };
 

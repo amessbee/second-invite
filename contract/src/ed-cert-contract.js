@@ -1,5 +1,5 @@
 // @ts-check
-import { E, Far } from '@endo/far';
+import { E, Far, passStyleOf } from '@endo/far';
 import { M } from '@endo/patterns';
 import '@agoric/zoe/exported.js';
 /**
@@ -22,8 +22,8 @@ export const start = async (zcf, privateArgs) => {
   let certificateCount = 0n;
 
   // Create storage node for certificate data
-  const certificateDataRoot = await E(privateArgs.storageNode).makeChildNode(
-    'certificates',
+  const recordsDataRoot = await E(privateArgs.storageNode).makeChildNode(
+    'TamperProofRecords',
   );
 
   const proposalShape = harden({
@@ -39,21 +39,41 @@ export const start = async (zcf, privateArgs) => {
    * @returns {Promise<object>} myObject
    */
   const publishHandler = async (seat, offerArgs) => {
-    const crObject = {
-      name: "Alice",
-      age: 30,
-      isStudent: false
-    };
-    const invObject = await zcf.makeInvitation(
-      publishHandler,
-      'publish certificate data',
-      undefined,
-      proposalShape,
+    const { certificateData } = offerArgs;
+    const currentId = certificateData.certificateId;
+
+    const edCertNode = await E(recordsDataRoot).makeChildNode(
+      certificateData.certificateId,
     );
 
+    await E(edCertNode).setValue(certificateData.studentName);
 
-      seat.exit();      
-      return crObject;
+    seat.exit();
+    return harden({
+      invitationMakers: Far('second invitation maker', {
+        makeSecondInvitation: () =>
+          zcf.makeInvitation(
+            async (seat, offerArgs) => {
+              const { certificateData } = offerArgs;
+
+              if (certificateData.certificateId !== currentId) {
+                throw new Error('Certificate ID mismatch');
+              }
+
+              const edCertNode = await E(recordsDataRoot).makeChildNode(
+                certificateData.certificateId,
+              );
+
+              await E(edCertNode).setValue(
+                JSON.stringify(certificateData.studentName),
+              );
+              seat.exit();
+            },
+
+            'SecondInvite',
+          ),
+      }),
+    });
   };
 
   const makePublishInvitation = () =>
