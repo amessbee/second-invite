@@ -56,7 +56,7 @@ export const start = async (zcf, privateArgs) => {
     await E(edCertNode).setValue(JSON.stringify(certificateData));
 
     seat.exit();
-    return harden({
+    const secondInviteObj =  harden({
       invitationMakers: Far('second invitation maker', {
         makeSecondInvitation: () =>
           zcf.makeInvitation(
@@ -69,12 +69,14 @@ export const start = async (zcf, privateArgs) => {
 
               await E(edCertNode).setValue(JSON.stringify(certificateData));
               seat.exit();
+              return secondInviteObj;
             },
 
             'SecondInvite',
           ),
       }),
     });
+    return secondInviteObj;
   };
 
   const makePublishInvitation = () =>
