@@ -23,11 +23,11 @@ export const startEdCertContract = async permittedPowers => {
       produce: issueProducers,
     },
     installation: {
-      consume: { edCert: edCertInstallationP },
+      consume: { secondInvite: edCertInstallationP },
     },
     instance: {
       // @ts-expect-error dynamic extension to promise space
-      produce: { edCert: produceInstance },
+      produce: { secondInvite: produceInstance },
     },
   } = permittedPowers;
 
@@ -37,7 +37,7 @@ export const startEdCertContract = async permittedPowers => {
     permittedPowers,
   );
 
-  const storageNode = await E(chainStorage).makeChildNode('edCert');
+  const storageNode = await E(chainStorage).makeChildNode('secondInvite');
   const istIssuer = await istIssuerP;
 
   const terms = { maxCertificates: 100n };
@@ -48,7 +48,7 @@ export const startEdCertContract = async permittedPowers => {
   const { instance } = await E(startUpgradable)({
     installation,
     issuerKeywordRecord: { Price: istIssuer },
-    label: 'edCert',
+    label: 'secondInvite',
     terms,
     privateArgs: {
       storageNode,
@@ -65,7 +65,7 @@ export const startEdCertContract = async permittedPowers => {
 
   produceInstance.reset();
   produceInstance.resolve(instance);
-  console.log('edCert (re)started');
+  console.log('secondInvite (re)started');
 };
 
 /** @type { import("@agoric/vats/src/core/lib-boot").BootstrapManifest } */
@@ -78,7 +78,7 @@ const edCertManifest = {
       startUpgradable: true, // to start contract and save adminFacet
       zoe: true, // to get contract terms, including issuer/brand
     },
-    installation: { consume: { edCert: true } },
+    installation: { consume: { secondInvite: true } },
     issuer: {
       consume: { IST: true },
       produce: { IST: true },
@@ -87,7 +87,7 @@ const edCertManifest = {
       consume: { IST: true },
       produce: { IST: true },
     },
-    instance: { produce: { edCert: true } },
+    instance: { produce: { secondInvite: true } },
   },
 };
 harden(edCertManifest);
@@ -96,7 +96,7 @@ export const getManifestForEdCert = ({ restoreRef }, { edCertRef }) => {
   return harden({
     manifest: edCertManifest,
     installations: {
-      edCert: restoreRef(edCertRef),
+      secondInvite: restoreRef(edCertRef),
     },
   });
 };

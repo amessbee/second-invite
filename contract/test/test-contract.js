@@ -25,7 +25,7 @@ const makeTestContext = async _t => {
     zoe,
     bundle,
     bundleCache,
-    storageNode: makeMockChainStorageRoot().makeChildNode('edCert'),
+    storageNode: makeMockChainStorageRoot().makeChildNode('secondInvite'),
     board: makeMockChainStorageRoot().makeChildNode('boardAux'),
   };
 };
@@ -59,7 +59,7 @@ test('Successfully publish valid certficate data', async t => {
   const invitation = E(publicFacet).makePublishInvitation();
 
   const userSeat = await E(zoe).offer(invitation, undefined, undefined, {
-    edCert: validEdCert,
+    secondInvite: validEdCert,
   });
 
   const result = await E(userSeat).getOfferResult();
@@ -90,7 +90,7 @@ test('Reject invalid certficate data', async t => {
 
   const invitation = E(publicFacet).makePublishInvitation();
   const seat = await E(zoe).offer(invitation, undefined, undefined, {
-    edCert: invalidEdCert,
+    secondInvite: invalidEdCert,
   });
   const resultP = await E(seat).getOfferResult();
   t.is(resultP.message, 'Invalid certficate data structure');
@@ -112,7 +112,7 @@ test('Handle duplicate certficate ID', async t => {
     { storageNode, board },
   );
 
-  const edCert = {
+  const secondInvite = {
     certificateId: 'P12345',
     name: 'John Doe',
     age: 30,
@@ -122,14 +122,14 @@ test('Handle duplicate certficate ID', async t => {
 
   // First submission
   const invitation1 = E(publicFacet).makePublishInvitation();
-  await E(zoe).offer(invitation1, undefined, undefined, { edCert });
+  await E(zoe).offer(invitation1, undefined, undefined, { secondInvite });
 
   // Second submission with same ID
   const invitation2 = E(publicFacet).makePublishInvitation();
-  const duplicateData = { ...edCert, name: 'Jane Doe' };
+  const duplicateData = { ...secondInvite, name: 'Jane Doe' };
 
   const userSeat = await E(zoe).offer(invitation2, undefined, undefined, {
-    edCert: duplicateData,
+    secondInvite: duplicateData,
   });
 
   const result = await E(userSeat).getOfferResult();
@@ -171,14 +171,14 @@ test('Enforce maxCertificates limit', async t => {
   // First certficate should succeed
   const invitation1 = E(publicFacet).makePublishInvitation();
   await E(zoe).offer(invitation1, undefined, undefined, {
-    edCert: certificate1Data,
+    secondInvite: certificate1Data,
   });
 
   // Second patcertficateient should fail due to maxCertificates limit
   const invitation2 = E(publicFacet).makePublishInvitation();
 
   const seat = await E(zoe).offer(invitation2, undefined, undefined, {
-    edCert: certificate2Data,
+    secondInvite: certificate2Data,
   });
   const result = await E(seat).getOfferResult();
   t.is(result.message, 'Maximum number of certificates reached');

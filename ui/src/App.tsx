@@ -34,7 +34,7 @@ const ENDPOINTS = {
   RPC: 'http://localhost:26657',
   API: 'http://localhost:1317',
 };
-let offerId = `edCert-${Date.now()}`;
+let offerId = `secondInvite-${Date.now()}`;
 
 const watcher = makeAgoricChainStorageWatcher(ENDPOINTS.API, 'agoriclocal');
 
@@ -52,7 +52,7 @@ const setup = async () => {
     instances => {
       useAppStore.setState({
         certificateContractInstance: instances
-          .find(([name]) => name === 'edCert')!
+          .find(([name]) => name === 'secondInvite')!
           .at(1),
       });
     },
@@ -89,7 +89,7 @@ const publishEdCert = (certificate: any) => {
   }
 
   console.log(certificate);
-  offerId = `edCert-${Date.now()}`
+  offerId = `secondInvite-${Date.now()}`
   wallet?.makeOffer(
     {
       source: 'contract',
@@ -530,7 +530,7 @@ const UpdateCertificateForm = () => {
   useEffect(() => {
     const fetchCertificateList = async () => {
       const response = await fetch(
-        `${ENDPOINTS.API}/agoric/vstorage/children/published.edCert.TamperProofRecords`,
+        `${ENDPOINTS.API}/agoric/vstorage/children/published.secondInvite.TamperProofRecords`,
       );
       const data = await response.json();
       setCertificates(data.children);
@@ -546,7 +546,7 @@ const UpdateCertificateForm = () => {
     if (!certificateId) return;
 
     const response = await fetch(
-      `${ENDPOINTS.API}/agoric/vstorage/data/published.edCert.TamperProofRecords.${certificateId}`,
+      `${ENDPOINTS.API}/agoric/vstorage/data/published.secondInvite.TamperProofRecords.${certificateId}`,
     );
     const data = await response.json();
     const parsedData = JSON.parse(data.value).values[0];
@@ -849,7 +849,7 @@ const CertificateTab = () => {
   useEffect(() => {
     const fetchCertificateList = async () => {
       const response = await fetch(
-        `${ENDPOINTS.API}/agoric/vstorage/children/published.edCert.TamperProofRecords`,
+        `${ENDPOINTS.API}/agoric/vstorage/children/published.secondInvite.TamperProofRecords`,
       );
       const data = await response.json();
       setCertificates(data.children);
@@ -863,7 +863,7 @@ const CertificateTab = () => {
     try {
       setSelectedCertificateId(certificateId);
       const response = await fetch(
-        `${ENDPOINTS.API}/agoric/vstorage/data/published.edCert.TamperProofRecords.${certificateId}`,
+        `${ENDPOINTS.API}/agoric/vstorage/data/published.secondInvite.TamperProofRecords.${certificateId}`,
       );
       const data = await response.json();
       const parsedData = JSON.parse(data.value);

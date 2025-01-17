@@ -1,7 +1,7 @@
 #!/bin/bash
 set -xueo pipefail
 
-cd /workspace/contract
+cd /ws-secondInvite/contract
 
 SCRIPT=start-ed-cert.js
 PERMIT=start-ed-cert-permit.json
@@ -32,4 +32,4 @@ parseInstances() {
 # check that the contract was actually started
 api=http://localhost:1317
 curl $api/agoric/vstorage/data/published.agoricNames.instance \
-  | parseInstances | grep edCert
+  | parseInstances | grep secondInvite
